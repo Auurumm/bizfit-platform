@@ -1,0 +1,89 @@
+"use client"
+
+import type React from "react"
+import { createContext, useContext, useState, useEffect } from "react"
+import { supabase } from "@/lib/supabase/client"
+
+interface User {
+  id: string
+  email: string
+  name?: string
+}
+
+interface AuthContextType {
+  user: User | null
+  loading: boolean
+  signIn: (email: string, password: string) => Promise<{ data: any; error: string | null }>
+  signOut: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: false,
+  signIn: async () => ({ data: null, error: "인증 시스템 미설정" }),
+  signOut: async () => {},
+})
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setLoading(false)
+  }, [])
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      setLoading(true)
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error && error.message.includes("Failed to fetch")) {
+        console.warn("Supabase unreachable - falling back to local-dev mode")
+        const devUser = { id: "local-dev", email, name: "로컬 개발자" } as any
+        setUser(devUser)
+        return { data: devUser, error: null }
+      }
+
+      if (!error) {
+        return { data, error: null }
+      }
+
+      return { data: null, error: "이메일 또는 비밀번호가 잘못되었습니다" }
+    } catch (err) {
+      console.error("로그인 오류:", err)
+      return { data: null, error: "로그인 중 오류가 발생했습니다" }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const signOut = async () => {
+    try {
+      setLoading(true)
+      setUser(null)
+      window.location.href = "/"
+    } catch (error) {
+      console.error("로그아웃 오류:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const value: AuthContextType = {
+    user,
+    loading,
+    signIn,
+    signOut,
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  return context
+}

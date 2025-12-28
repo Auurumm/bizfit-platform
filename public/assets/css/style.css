@@ -1,0 +1,323 @@
+.law-firm-home-section-1,
+.law-firm-section-header,
+.law-firm-single-news-section-1 {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.law-firm-home-section-1 .overlay,
+.law-firm-section-header .overlay,
+.law-firm-single-news-section-1 .overlay {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.96;
+  background: #152833;
+  z-index: 1;
+}
+
+.law-firm-home-section-1 h1,
+.law-firm-section-header h1,
+.law-firm-single-news-section-1 h1 {
+  color: var(--White, #fff);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 84px;
+  letter-spacing: -1.6px;
+}
+
+.law-firm-home-section-1 .bg-circle,
+.law-firm-section-header .bg-circle,
+.law-firm-single-news-section-1 .bg-circle {
+  width: 650px;
+  height: 650px;
+  flex-shrink: 0;
+  border-radius: 650px;
+  background: var(--tc-theme-primary);
+  z-index: -2;
+}
+
+.banner-img {
+  margin-top: -170px;
+}
+
+.law-firm-home-section-2 svg {
+  margin-top: -10px;
+}
+
+.law-firm-home-section-2 svg text {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.8px;
+  fill: transparent;
+  stroke: var(--tc-theme-primary);
+  stroke-width: 2px;
+  animation: animated-stroke 2s;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.law-firm-home-section-2 .marketing-info h4 {
+  margin-top: -40px;
+  margin-bottom: 24px;
+}
+
+.law-firm-home-section-2 .marketing-info p {
+  margin-bottom: 60px;
+}
+
+.card-service .card-btn {
+  transform: translateY(-100%);
+  transition: all 0.4s ease-in-out;
+  z-index: 1000;
+  position: relative;
+  opacity: 0;
+}
+
+.card-service:hover .card-btn {
+  transform: translateY(0%);
+  transition: all 0.4s ease-in-out;
+  opacity: 1;
+}
+
+.law-firm-home-section-4 .accordion .card {
+  background: transparent;
+  transition: all 0.3s linear;
+}
+
+.law-firm-home-section-4 .accordion .card .card-header {
+  background: transparent;
+}
+
+.law-firm-home-section-4 .accordion .card .card-header a {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+.law-firm-home-section-4 .accordion .card .card-header a .arrow::before {
+  transition: 0.3s;
+  transform: rotate(0deg);
+  font-family: remixicon;
+  content: "\f1af";
+  color: var(--tc-theme-primary);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.law-firm-home-section-4 .accordion .card .card-header a.collapsed {
+  background-color: transparent;
+}
+
+.law-firm-home-section-4 .accordion .card .card-header a.collapsed .arrow {
+  background-color: transparent;
+}
+
+.law-firm-home-section-4 .accordion .card .card-header a.collapsed .arrow::before {
+  transition: 0.3s;
+  color: var(--tc-system-black);
+  transform: rotate(180deg);
+  content: "\ea13";
+}
+
+.law-firm-home-section-4 .accordion .card .collapse {
+  transition: all 0.3s linear;
+}
+
+.law-firm-home-section-4 .accordion .card .collapse.show {
+  border-bottom: 0;
+}
+
+.law-firm-home-section-4 .accordion .collapse-custom {
+  border-radius: 0px;
+  transition: all 0.3s linear;
+}
+
+.law-firm-home-section-4 .accordion .collapse-custom.active {
+  background: linear-gradient(180deg, #fff 0%, #f6f3ef 113.64%);
+}
+
+.avatar-2 {
+  margin-left: -1rem;
+}
+
+.card-team:hover .team-overlay {
+  opacity: 1;
+  transform: translateX(0%);
+}
+
+.card-team .team-overlay {
+  content: "";
+  position: absolute;
+  transition: all 0.3s linear;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--tc-theme-primary);
+  opacity: 0;
+  transform: translateX(-50%);
+}
+
+.card-team .team-overlay .icon {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 34px;
+}
+
+.card-team .team-overlay .icon svg {
+  height: 14px;
+  width: 14px;
+  fill: var(--tc-system-white);
+  opacity: 0.5;
+}
+
+.card-team .team-overlay .icon:hover {
+  background: #292929;
+}
+
+.card-team .team-overlay .icon:hover svg {
+  fill: var(--tc-system-white);
+  opacity: 1;
+  transition-duration: 0.3s;
+}
+
+.law-firm-home-section-8 .circle-text-2 {
+  position: absolute;
+  margin-bottom: 0;
+  font-size: 15px;
+  text-transform: uppercase;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.law-firm-home-section-8 .circle-text-2 span {
+  position: absolute;
+  top: -74px;
+  display: inline-block;
+  transform-origin: 0 74px;
+}
+
+.law-firm-home-section-8 .circle-1 {
+  width: 262px;
+  height: 262px;
+  flex-shrink: 0;
+  border-radius: 262px;
+  border: 1px solid var(--tc-system-white);
+  opacity: 0.1;
+}
+
+.law-firm-home-section-8 .circle-2 {
+  width: 388px;
+  height: 388px;
+  border-radius: 388px;
+  border: 1px solid var(--tc-system-white);
+  opacity: 0.04;
+}
+
+.section-footer-12 {
+  background: var(--tc-theme-primary);
+}
+
+.section-footer-12 .icon svg {
+  height: 14px;
+  width: 14px;
+  fill: #dcc69f;
+}
+
+.section-footer-12 .icon:hover svg {
+  fill: var(--tc-system-white);
+  opacity: 1;
+  transition-duration: 0.3s;
+}
+
+.input-group .form-control {
+  color: var(--tc-system-black);
+}
+
+.input-group .form-control:hover,
+.input-group .form-control:focus {
+  background-color: var(--tc-system-white) !important;
+  border: 1px solid var(--tc-system-black) !important;
+}
+
+.law-firm-single-service-section-1 .input-group .form-control {
+  color: var(--tc-system-black);
+  background-color: var(--tc-system-white) !important;
+}
+
+.law-firm-single-service-section-1 .input-group .form-control:focus {
+  background-color: var(--tc-system-white) !important;
+}
+
+.law-firm-single-service-section-1 .accordion .card {
+  background: transparent;
+  transition: all 0.3s linear;
+}
+
+.law-firm-single-service-section-1 .accordion .card .card-header {
+  background: transparent;
+}
+
+.law-firm-single-service-section-1 .accordion .card .card-header a {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: var(--tc-system-white);
+  transition: all 0.3s linear;
+}
+
+.law-firm-single-service-section-1 .accordion .card .card-header a .arrow::before {
+  transition: 0.3s;
+  transform: rotate(0deg);
+  font-family: remixicon;
+  content: "\f1af";
+  color: var(--tc-system-black);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.law-firm-single-service-section-1 .accordion .card .card-header a.collapsed {
+  background-color: transparent;
+}
+
+.law-firm-single-service-section-1 .accordion .card .card-header a.collapsed .arrow {
+  background-color: transparent;
+}
+
+.law-firm-single-service-section-1 .accordion .card .card-header a.collapsed .arrow::before {
+  transition: 0.3s;
+  color: var(--tc-system-black);
+  transform: rotate(180deg);
+  content: "\ea13";
+}
+
+.pagination_item {
+  background-color: #f6f3ef;
+  border-radius: 0px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.pagination_item.active {
+  background-color: var(--tc-theme-primary);
+  color: var(--tc-system-white) !important;
+}
+
+.pagination_item:hover {
+  background-color: var(--tc-theme-primary);
+  color: var(--tc-system-white) !important;
+}
+
+.pagination_item:focus {
+  background-color: var(--tc-theme-primary) !important;
+  color: var(--tc-system-white) !important;
+}
+
+/*# sourceMappingURL=style.css.map */
