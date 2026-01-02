@@ -56,7 +56,7 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
 										<Link className="nav-link text-uppercase" href="/diagnosis">AI 진단</Link>
 									</li>
 									<li className="nav-item">
-										<Link className="nav-link text-uppercase" href="/support-programs">지원사업</Link>
+										<Link className="nav-link text-uppercase" href="/programs">지원사업</Link>
 									</li>
 									<li className="nav-item">
 										<Link className="nav-link text-uppercase" href="/experts">전문가</Link>

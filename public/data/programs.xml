@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  정부 지원사업 백업 데이터
+  최종 업데이트: 2025년 1월
+  용도: 기업마당 API 오류 시 백업용
+  
+  [업데이트 가이드]
+  1. 매월 초 새로운 지원사업 추가
+  2. 마감된 사업은 삭제하거나 status="closed"로 변경
+  3. deadline이 "상시접수"인 경우 연중 신청 가능
+-->
+<programs lastUpdated="2025-01-02" totalCount="12">
+  
+  <program id="2026-startup-001">
+    <title>2026년 창업도약패키지 지원사업 (16기)</title>
+    <organization>창업진흥원</organization>
+    <ministry>중소벤처기업부</ministry>
+    <category>창업지원</category>
+    <budget>최대 1억원</budget>
+    <deadline>2026-02-28</deadline>
+    <registrationDate>2025-12-20</registrationDate>
+    <description>예비창업자 및 초기창업기업의 성공적인 창업을 위한 종합 지원 프로그램입니다. 창업교육, 사업화자금, 멘토링, 네트워킹을 통해 창업 성공률을 높입니다.</description>
+    <requirements>
+      <item>만 39세 이하 예비창업자 또는 업력 3년 이내 창업기업</item>
+      <item>창업아이템 보유 및 사업계획서 제출 가능자</item>
+      <item>6개월간 교육 참여 가능자</item>
+    </requirements>
+    <applicationUrl>https://www.k-startup.go.kr</applicationUrl>
+    <contactInfo>창업진흥원 창업교육실 02-6202-2000</contactInfo>
+    <tags>
+      <tag>창업</tag>
+      <tag>사업화</tag>
+      <tag>멘토링</tag>
+      <tag>교육</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>예비창업자</targetCompany>
+    <supportType>종합지원</supportType>
+    <matching>
+      <businessTypes>startup,youth,university</businessTypes>
+      <industries>it,manufacturing,service,healthcare,media</industries>
+      <challenges>funding,marketing,technology</challenges>
+      <goals>growth,innovation,market</goals>
+    </matching>
+  </program>
+
+  <program id="2026-ict-001">
+    <title>2026년 ICT 이노베이션 스퀘어 조성사업</title>
+    <organization>정보통신기획평가원</organization>
+    <ministry>과학기술정보통신부</ministry>
+    <category>ICT지원</category>
+    <budget>최대 50억원</budget>
+    <deadline>2026-03-15</deadline>
+    <registrationDate>2025-12-22</registrationDate>
+    <description>ICT 분야 혁신 생태계 조성을 위한 거점 공간 구축 및 운영 지원사업입니다. 스타트업-대기업-연구기관 간 협력을 통한 개방형 혁신 플랫폼을 구축합니다.</description>
+    <requirements>
+      <item>ICT 분야 기업, 연구기관, 대학 등의 컨소시엄</item>
+      <item>지자체 또는 공공기관과의 협력체계 구축</item>
+      <item>3년 이상 지속 운영 계획 보유</item>
+    </requirements>
+    <applicationUrl>https://www.iitp.kr</applicationUrl>
+    <contactInfo>정보통신기획평가원 ICT융합기술팀 042-612-8000</contactInfo>
+    <tags>
+      <tag>ICT</tag>
+      <tag>혁신생태계</tag>
+      <tag>플랫폼</tag>
+      <tag>컨소시엄</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>ICT기업</targetCompany>
+    <supportType>인프라구축</supportType>
+    <matching>
+      <businessTypes>startup,venture,sme</businessTypes>
+      <industries>it,media</industries>
+      <challenges>technology,digital,expansion</challenges>
+      <goals>innovation,digital,market</goals>
+    </matching>
+  </program>
+
+  <program id="2026-export-001">
+    <title>2026년 수출 유망기업 글로벌 진출 지원사업</title>
+    <organization>대한무역투자진흥공사</organization>
+    <ministry>산업통상자원부</ministry>
+    <category>수출지원</category>
+    <budget>최대 3억원</budget>
+    <deadline>2026-01-31</deadline>
+    <registrationDate>2025-12-15</registrationDate>
+    <description>수출 잠재력이 높은 중소·중견기업의 해외시장 진출을 위한 맞춤형 지원사업입니다. 시장조사, 바이어 발굴, 마케팅, 인증획득 등을 종합 지원합니다.</description>
+    <requirements>
+      <item>중소·중견기업 (매출액 1,500억원 이하)</item>
+      <item>최근 3년간 수출실적 보유 또는 수출계약 체결 예정</item>
+      <item>해외진출 전략 및 실행계획 보유</item>
+    </requirements>
+    <applicationUrl>https://www.kotra.or.kr</applicationUrl>
+    <contactInfo>KOTRA 중소기업지원센터 02-3460-7000</contactInfo>
+    <tags>
+      <tag>수출</tag>
+      <tag>해외진출</tag>
+      <tag>글로벌</tag>
+      <tag>마케팅</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>수출기업</targetCompany>
+    <supportType>해외진출</supportType>
+    <matching>
+      <businessTypes>sme,venture,startup</businessTypes>
+      <industries>manufacturing,it,retail,agriculture</industries>
+      <challenges>export,marketing,expansion</challenges>
+      <goals>market,growth,brand</goals>
+    </matching>
+  </program>
+
+  <program id="2026-smart-001">
+    <title>2026년 스마트공장 고도화 지원사업</title>
+    <organization>한국생산기술연구원</organization>
+    <ministry>산업통상자원부</ministry>
+    <category>제조업지원</category>
+    <budget>최대 8억원</budget>
+    <deadline>2026-04-30</deadline>
+    <registrationDate>2025-12-20</registrationDate>
+    <description>제조업의 디지털 전환 가속화를 위한 스마트공장 구축 및 고도화 지원사업입니다. 생산성 향상, 품질 개선, 원가절감 등 경쟁력 강화를 목표로 합니다.</description>
+    <requirements>
+      <item>제조업 등록 중소·중견기업</item>
+      <item>스마트공장 수준 진단 완료</item>
+      <item>스마트공장 구축 또는 고도화 계획 보유</item>
+    </requirements>
+    <applicationUrl>https://www.smart-factory.kr</applicationUrl>
+    <contactInfo>스마트제조혁신추진단 1588-2355</contactInfo>
+    <tags>
+      <tag>스마트공장</tag>
+      <tag>제조업</tag>
+      <tag>디지털전환</tag>
+      <tag>자동화</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>제조기업</targetCompany>
+    <supportType>시설구축</supportType>
+    <matching>
+      <businessTypes>sme,venture</businessTypes>
+      <industries>manufacturing</industries>
+      <challenges>digital,efficiency,technology</challenges>
+      <goals>efficiency,digital,innovation</goals>
+    </matching>
+  </program>
+
+  <program id="2026-youth-001">
+    <title>2026년 청년창업사관학교 17기</title>
+    <organization>창업진흥원</organization>
+    <ministry>중소벤처기업부</ministry>
+    <category>청년창업</category>
+    <budget>최대 1억원</budget>
+    <deadline>2026-01-15</deadline>
+    <registrationDate>2025-12-01</registrationDate>
+    <description>만 39세 이하 청년의 기술창업 활성화를 위한 창업교육-보육-투자연계 프로그램입니다. 6개월간 집중 보육 및 사업화 자금을 지원합니다.</description>
+    <requirements>
+      <item>만 39세 이하 예비창업자 또는 창업 3년 이내 기업 대표</item>
+      <item>기술기반 창업아이템 보유</item>
+      <item>6개월간 전일제 교육 참여 가능</item>
+    </requirements>
+    <applicationUrl>https://www.k-startup.go.kr</applicationUrl>
+    <contactInfo>창업진흥원 청년창업팀 02-6202-2100</contactInfo>
+    <tags>
+      <tag>청년창업</tag>
+      <tag>기술창업</tag>
+      <tag>보육</tag>
+      <tag>투자연계</tag>
+    </tags>
+    <region>서울</region>
+    <targetCompany>청년창업자</targetCompany>
+    <supportType>창업보육</supportType>
+    <matching>
+      <businessTypes>youth,startup,university</businessTypes>
+      <industries>it,manufacturing,healthcare,media</industries>
+      <challenges>funding,marketing,talent,technology</challenges>
+      <goals>growth,innovation,brand</goals>
+    </matching>
+  </program>
+
+  <program id="2026-women-001">
+    <title>2026년 여성기업 성장지원사업</title>
+    <organization>한국여성경제인협회</organization>
+    <ministry>여성가족부</ministry>
+    <category>여성기업</category>
+    <budget>최대 5천만원</budget>
+    <deadline>2026-03-31</deadline>
+    <registrationDate>2025-12-18</registrationDate>
+    <description>여성기업의 경쟁력 강화 및 성장 촉진을 위한 맞춤형 지원사업입니다. 경영컨설팅, 마케팅, 판로개척, 인력양성 등을 종합 지원합니다.</description>
+    <requirements>
+      <item>여성기업 확인서 보유 기업</item>
+      <item>업력 1년 이상 중소기업</item>
+      <item>최근 3년간 평균 매출액 50억원 이하</item>
+    </requirements>
+    <applicationUrl>https://www.wbiz.or.kr</applicationUrl>
+    <contactInfo>한국여성경제인협회 02-369-0999</contactInfo>
+    <tags>
+      <tag>여성기업</tag>
+      <tag>성장지원</tag>
+      <tag>컨설팅</tag>
+      <tag>판로개척</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>여성기업</targetCompany>
+    <supportType>경영지원</supportType>
+    <matching>
+      <businessTypes>women,startup,sme</businessTypes>
+      <industries>service,retail,education,healthcare</industries>
+      <challenges>marketing,funding,expansion</challenges>
+      <goals>growth,market,brand</goals>
+    </matching>
+  </program>
+
+  <program id="2026-rnd-001">
+    <title>2026년 중소기업 R&amp;D 역량강화 지원사업</title>
+    <organization>중소기업기술정보진흥원</organization>
+    <ministry>중소벤처기업부</ministry>
+    <category>R&amp;D지원</category>
+    <budget>최대 5억원</budget>
+    <deadline>2026-02-20</deadline>
+    <registrationDate>2025-12-15</registrationDate>
+    <description>중소기업의 기술개발 역량 강화를 위한 R&amp;D 자금 지원사업입니다. 신제품·신기술 개발, 공정개선, 품질향상 등을 지원합니다.</description>
+    <requirements>
+      <item>중소기업기본법상 중소기업</item>
+      <item>R&amp;D 전담조직 또는 연구인력 보유</item>
+      <item>기술개발 계획서 및 사업계획서 제출</item>
+    </requirements>
+    <applicationUrl>https://www.tipa.or.kr</applicationUrl>
+    <contactInfo>중소기업기술정보진흥원 042-388-0114</contactInfo>
+    <tags>
+      <tag>R&amp;D</tag>
+      <tag>기술개발</tag>
+      <tag>신제품</tag>
+      <tag>혁신</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>중소기업</targetCompany>
+    <supportType>R&amp;D자금</supportType>
+    <matching>
+      <businessTypes>sme,venture,startup</businessTypes>
+      <industries>it,manufacturing,healthcare</industries>
+      <challenges>technology,funding,certification</challenges>
+      <goals>innovation,growth,efficiency</goals>
+    </matching>
+  </program>
+
+  <program id="2025-employ-001">
+    <title>2025년 고용창출 장려금 지원사업</title>
+    <organization>고용노동부</organization>
+    <ministry>고용노동부</ministry>
+    <category>고용지원</category>
+    <budget>월 최대 80만원/인</budget>
+    <deadline>상시접수</deadline>
+    <registrationDate>2025-01-01</registrationDate>
+    <description>신규 직원 채용 기업 대상 인건비 지원사업입니다. 청년, 고령자, 장애인 등 취업취약계층 고용 시 추가 지원됩니다.</description>
+    <requirements>
+      <item>고용보험 가입 사업장</item>
+      <item>신규 근로자 6개월 이상 고용 유지</item>
+      <item>최저임금 이상 급여 지급</item>
+    </requirements>
+    <applicationUrl>https://www.ei.go.kr</applicationUrl>
+    <contactInfo>고용노동부 고객상담센터 1350</contactInfo>
+    <tags>
+      <tag>고용</tag>
+      <tag>인건비</tag>
+      <tag>채용</tag>
+      <tag>일자리</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>전체기업</targetCompany>
+    <supportType>인건비지원</supportType>
+    <matching>
+      <businessTypes>sme,startup,venture,social</businessTypes>
+      <industries>it,manufacturing,service,retail,healthcare,education</industries>
+      <challenges>talent,expansion</challenges>
+      <goals>talent,growth</goals>
+    </matching>
+  </program>
+
+  <program id="2026-social-001">
+    <title>2026년 사회적기업 육성사업</title>
+    <organization>한국사회적기업진흥원</organization>
+    <ministry>고용노동부</ministry>
+    <category>사회적기업</category>
+    <budget>최대 2억원</budget>
+    <deadline>2026-04-30</deadline>
+    <registrationDate>2025-12-10</registrationDate>
+    <description>사회적기업의 지속가능한 성장을 위한 인건비, 사업개발비, 컨설팅 등 종합 지원사업입니다.</description>
+    <requirements>
+      <item>사회적기업 인증 또는 예비사회적기업 지정</item>
+      <item>사회적 목적 실현 계획 보유</item>
+      <item>고용노동부 사회적기업 통합정보시스템 등록</item>
+    </requirements>
+    <applicationUrl>https://www.socialenterprise.or.kr</applicationUrl>
+    <contactInfo>한국사회적기업진흥원 1600-1190</contactInfo>
+    <tags>
+      <tag>사회적기업</tag>
+      <tag>사회적경제</tag>
+      <tag>지속가능</tag>
+      <tag>일자리창출</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>사회적기업</targetCompany>
+    <supportType>종합지원</supportType>
+    <matching>
+      <businessTypes>social</businessTypes>
+      <industries>service,education,healthcare,agriculture</industries>
+      <challenges>funding,talent,marketing</challenges>
+      <goals>sustainability,growth,talent</goals>
+    </matching>
+  </program>
+
+  <program id="2025-venture-001">
+    <title>2025년 벤처기업 확인 및 인증 지원</title>
+    <organization>벤처기업협회</organization>
+    <ministry>중소벤처기업부</ministry>
+    <category>벤처인증</category>
+    <budget>인증비용 지원</budget>
+    <deadline>상시접수</deadline>
+    <registrationDate>2025-01-01</registrationDate>
+    <description>벤처기업 확인을 통한 각종 지원사업 참여자격 부여 및 세제혜택, 금융지원 등 연계 지원사업입니다.</description>
+    <requirements>
+      <item>중소기업기본법상 중소기업</item>
+      <item>벤처기업 확인 요건 충족 (기술평가, 투자, 연구개발 등)</item>
+      <item>사업계획서 및 기술설명서 제출</item>
+    </requirements>
+    <applicationUrl>https://www.venturein.or.kr</applicationUrl>
+    <contactInfo>벤처기업협회 02-2156-2100</contactInfo>
+    <tags>
+      <tag>벤처</tag>
+      <tag>인증</tag>
+      <tag>세제혜택</tag>
+      <tag>금융지원</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>벤처기업</targetCompany>
+    <supportType>인증지원</supportType>
+    <matching>
+      <businessTypes>venture,startup,sme</businessTypes>
+      <industries>it,manufacturing,healthcare,media</industries>
+      <challenges>funding,certification</challenges>
+      <goals>growth,innovation</goals>
+    </matching>
+  </program>
+
+  <program id="2026-univ-001">
+    <title>2026년 대학창업펀드 조성사업</title>
+    <organization>한국연구재단</organization>
+    <ministry>교육부</ministry>
+    <category>대학창업</category>
+    <budget>최대 20억원</budget>
+    <deadline>2026-04-15</deadline>
+    <registrationDate>2025-12-17</registrationDate>
+    <description>대학 내 창업생태계 활성화를 위한 펀드 조성 및 운영 지원사업입니다. 대학생·교원·졸업생의 창업 촉진 및 투자 연계를 목표로 합니다.</description>
+    <requirements>
+      <item>4년제 대학교 (전문대학 포함)</item>
+      <item>창업지원단 또는 창업교육센터 운영</item>
+      <item>최근 3년간 창업교육 실적 보유</item>
+    </requirements>
+    <applicationUrl>https://www.nrf.re.kr</applicationUrl>
+    <contactInfo>한국연구재단 산학협력팀 042-869-6000</contactInfo>
+    <tags>
+      <tag>대학창업</tag>
+      <tag>펀드조성</tag>
+      <tag>투자연계</tag>
+      <tag>창업생태계</tag>
+    </tags>
+    <region>전국</region>
+    <targetCompany>대학</targetCompany>
+    <supportType>펀드조성</supportType>
+    <matching>
+      <businessTypes>university,startup</businessTypes>
+      <industries>it,manufacturing,healthcare,education</industries>
+      <challenges>funding,technology</challenges>
+      <goals>innovation,growth</goals>
+    </matching>
+  </program>
+
+  <program id="2026-regional-001">
+    <title>2026년 지역특화 창업생태계 조성사업</title>
+    <organization>창업진흥원</organization>
+    <ministry>중소벤처기업부</ministry>
+    <category>지역창업</category>
+    <budget>최대 30억원</budget>
+    <deadline>2026-06-30</deadline>
+    <registrationDate>2025-12-16</registrationDate>
+    <description>지역별 특화산업과 연계한 창업생태계 구축으로 지역경제 활성화 및 일자리 창출을 위한 종합 지원사업입니다.</description>
+    <requirements>
+      <item>지자체-대학-기업 컨소시엄 구성</item>
+      <item>지역 특화산업 연계 창업 프로그램</item>
+      <item>3년 이상 지속 운영 계획</item>
+    </requirements>
+    <applicationUrl>https://www.k-startup.go.kr</applicationUrl>
+    <contactInfo>창업진흥원 지역창업팀 02-6202-2200</contactInfo>
+    <tags>
+      <tag>지역특화</tag>
+      <tag>창업생태계</tag>
+      <tag>지자체</tag>
+      <tag>특화산업</tag>
+    </tags>
+    <region>지역별</region>
+    <targetCompany>지역기업</targetCompany>
+    <supportType>생태계조성</supportType>
+    <matching>
+      <businessTypes>regional,startup,sme</businessTypes>
+      <industries>manufacturing,agriculture,tourism,service</industries>
+      <challenges>funding,expansion,talent</challenges>
+      <goals>growth,market,sustainability</goals>
+    </matching>
+  </program>
+
+</programs>

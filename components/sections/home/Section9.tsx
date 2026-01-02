@@ -18,7 +18,7 @@ export default function Section9() {
 						<div className="col-lg-4">
 							<div className="card-news position-relative mb-lg-0 mb-8 hover-up">
 								<Link
-									href="/support-programs"
+									href="/programs"
 									className="card-news-img position-relative d-block"
 								>
 									<img
@@ -42,7 +42,7 @@ export default function Section9() {
 										</div>
 									</div>
 									<div className="card-news-title mt-2">
-										<Link href="/support-programs">
+										<Link href="/programs">
 											<h6>2025년 중소기업 R&D 역량강화 지원사업</h6>
 										</Link>
 									</div>
@@ -52,7 +52,7 @@ export default function Section9() {
 						<div className="col-lg-4">
 							<div className="card-news position-relative mb-lg-0 mb-8 hover-up">
 								<Link
-									href="/support-programs"
+									href="/programs"
 									className="card-news-img position-relative d-block"
 								>
 									<img
@@ -76,7 +76,7 @@ export default function Section9() {
 										</div>
 									</div>
 									<div className="card-news-title mt-2">
-										<Link href="/support-programs">
+										<Link href="/programs">
 											<h6>글로벌 수출 바우처 지원사업</h6>
 										</Link>
 									</div>
@@ -86,7 +86,7 @@ export default function Section9() {
 						<div className="col-lg-4">
 							<div className="card-news position-relative mb-lg-0 mb-8 hover-up">
 								<Link
-									href="/support-programs"
+									href="/programs"
 									className="card-news-img position-relative d-block"
 								>
 									<img
@@ -110,7 +110,7 @@ export default function Section9() {
 										</div>
 									</div>
 									<div className="card-news-title mt-2">
-										<Link href="/support-programs">
+										<Link href="/programs">
 											<h6>청년 디지털 일자리 사업</h6>
 										</Link>
 									</div>
@@ -119,7 +119,7 @@ export default function Section9() {
 						</div>
 					</div>
 					<div className="text-center mt-8">
-						<Link href="/support-programs" className="btn btn-outline-secondary">
+						<Link href="/programs" className="btn btn-outline-secondary">
 							<span>전체 지원사업 보기</span>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

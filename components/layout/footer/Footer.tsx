@@ -58,7 +58,7 @@ export default function Footer() {
 										<Link href="/diagnosis" className="hover-effect-1 text-white opacity-75">
 											AI 진단
 										</Link>
-										<Link href="/support-programs" className="hover-effect-1 text-white opacity-75">
+										<Link href="/programs" className="hover-effect-1 text-white opacity-75">
 											지원사업
 										</Link>
 										<Link href="/experts" className="hover-effect-1 text-white opacity-75">
@@ -141,7 +141,7 @@ export default function Footer() {
 									<Link href="/diagnosis" className="btn-text text-white hover-effect-1">
 										AI 진단
 									</Link>
-									<Link href="/support-programs" className="btn-text text-white hover-effect-1">
+									<Link href="/programs" className="btn-text text-white hover-effect-1">
 										지원사업
 									</Link>
 									<Link href="/experts" className="btn-text text-white hover-effect-1">

@@ -65,7 +65,7 @@ export default function Section3() {
 										/>
 										<div className="position-absolute top-50 start-50 translate-middle">
 											<Link
-												href="/support-programs?category=rnd"
+												href="/programs?category=rnd"
 												className="btn btn-primary hover-up"
 											>
 												<span>자세히 보기</span>
@@ -87,7 +87,7 @@ export default function Section3() {
 											기술개발, 연구개발 관련<br />
 											정부 지원사업을 찾아보세요
 										</p>
-										<Link href="/support-programs?category=rnd" className="text-white text-opacity-50 btn-text">
+										<Link href="/programs?category=rnd" className="text-white text-opacity-50 btn-text">
 											자세히 보기
 										</Link>
 									</div>
@@ -104,7 +104,7 @@ export default function Section3() {
 										/>
 										<div className="position-absolute top-50 start-50 translate-middle">
 											<Link
-												href="/support-programs?category=startup"
+												href="/programs?category=startup"
 												className="btn btn-primary hover-up"
 											>
 												<span>자세히 보기</span>
@@ -126,7 +126,7 @@ export default function Section3() {
 											예비창업자, 초기창업기업을 위한<br />
 											다양한 지원사업
 										</p>
-										<Link href="/support-programs?category=startup" className="text-white text-opacity-50 btn-text">
+										<Link href="/programs?category=startup" className="text-white text-opacity-50 btn-text">
 											자세히 보기
 										</Link>
 									</div>
@@ -143,7 +143,7 @@ export default function Section3() {
 										/>
 										<div className="position-absolute top-50 start-50 translate-middle">
 											<Link
-												href="/support-programs?category=export"
+												href="/programs?category=export"
 												className="btn btn-primary hover-up"
 											>
 												<span>자세히 보기</span>
@@ -166,7 +166,7 @@ export default function Section3() {
 											해외진출, 수출 바우처 등<br />
 											글로벌 성장 지원
 										</p>
-										<Link href="/support-programs?category=export" className="text-white text-opacity-50 btn-text">
+										<Link href="/programs?category=export" className="text-white text-opacity-50 btn-text">
 											자세히 보기
 										</Link>
 									</div>
@@ -183,7 +183,7 @@ export default function Section3() {
 										/>
 										<div className="position-absolute top-50 start-50 translate-middle">
 											<Link
-												href="/support-programs?category=employment"
+												href="/programs?category=employment"
 												className="btn btn-primary hover-up"
 											>
 												<span>자세히 보기</span>
@@ -207,7 +207,7 @@ export default function Section3() {
 											인력채용, 고용유지 등<br />
 											인력 관련 지원사업
 										</p>
-										<Link href="/support-programs?category=employment" className="text-white text-opacity-50 btn-text">
+										<Link href="/programs?category=employment" className="text-white text-opacity-50 btn-text">
 											자세히 보기
 										</Link>
 									</div>
@@ -224,7 +224,7 @@ export default function Section3() {
 										/>
 										<div className="position-absolute top-50 start-50 translate-middle">
 											<Link
-												href="/support-programs?category=funding"
+												href="/programs?category=funding"
 												className="btn btn-primary hover-up"
 											>
 												<span>자세히 보기</span>
@@ -246,7 +246,7 @@ export default function Section3() {
 											정책자금, 보증, 융자 등<br />
 											자금 조달 지원
 										</p>
-										<Link href="/support-programs?category=funding" className="text-white text-opacity-50 btn-text">
+										<Link href="/programs?category=funding" className="text-white text-opacity-50 btn-text">
 											자세히 보기
 										</Link>
 									</div>
@@ -263,7 +263,7 @@ export default function Section3() {
 										/>
 										<div className="position-absolute top-50 start-50 translate-middle">
 											<Link
-												href="/support-programs?category=education"
+												href="/programs?category=education"
 												className="btn btn-primary hover-up"
 											>
 												<span>자세히 보기</span>
@@ -285,7 +285,7 @@ export default function Section3() {
 											경영컨설팅, 교육훈련 등<br />
 											역량강화 지원
 										</p>
-										<Link href="/support-programs?category=education" className="text-white text-opacity-50 btn-text">
+										<Link href="/programs?category=education" className="text-white text-opacity-50 btn-text">
 											자세히 보기
 										</Link>
 									</div>

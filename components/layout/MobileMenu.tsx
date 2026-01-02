@@ -44,7 +44,7 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 											<Link href="/diagnosis">AI 진단</Link>
 										</li>
 										<li>
-											<Link href="/support-programs">지원사업</Link>
+											<Link href="/programs">지원사업</Link>
 										</li>
 										<li>
 											<Link href="/experts">전문가</Link>

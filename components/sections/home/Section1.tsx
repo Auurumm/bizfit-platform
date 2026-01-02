@@ -66,7 +66,7 @@ export default function Section1() {
 									</svg>
 								</Link>
 								<Link
-									href="/support-programs"
+									href="/programs"
 									className="btn btn-outline-secondary bg-transparent text-white border-white border-opacity-50"
 									data-aos="fade-up"
 									data-aos-delay={200}
