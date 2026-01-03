@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<experts lastUpdated="2025-12-28" totalCount="8">
+  
+  <!-- 정부지원사업 전문가 -->
+  <expert id="expert-001">
+    <name>김정훈</name>
+    <title>정부지원사업 컨설턴트</title>
+    <organization>비즈핏 컨설팅</organization>
+    <profileImage>/images/experts/default-male.png</profileImage>
+    <introduction>15년 이상의 정부지원사업 컨설팅 경력을 보유한 전문가입니다. 중소기업진흥공단, 창업진흥원 등 주요 기관의 지원사업 선정률 85% 이상을 달성했습니다.</introduction>
+    <experience>15</experience>
+    <successRate>85</successRate>
+    <consultingCount>320</consultingCount>
+    <specialties>
+      <specialty>R&amp;D 지원사업</specialty>
+      <specialty>창업지원사업</specialty>
+      <specialty>수출바우처</specialty>
+      <specialty>스마트공장</specialty>
+    </specialties>
+    <certifications>
+      <certification>중소기업 경영컨설턴트</certification>
+      <certification>기술거래사</certification>
+      <certification>PMP</certification>
+    </certifications>
+    <industries>
+      <industry>IT/소프트웨어</industry>
+      <industry>제조업</industry>
+      <industry>바이오/헬스케어</industry>
+    </industries>
+    <contact>
+      <email>kim.jh@bizfit.co.kr</email>
+      <phone>02-1234-5678</phone>
+    </contact>
+    <availableTime>평일 09:00-18:00</availableTime>
+    <consultingFee>초기 상담 무료 / 본 컨설팅 협의</consultingFee>
+    <rating>4.9</rating>
+    <reviewCount>128</reviewCount>
+  </expert>
+
+  <expert id="expert-002">
+    <name>이수진</name>
+    <title>기술사업화 전문가</title>
+    <organization>테크브릿지 파트너스</organization>
+    <profileImage>/images/experts/default-female.png</profileImage>
+    <introduction>TIPS, 창업성장기술개발 등 기술창업 분야 전문 컨설턴트입니다. 스타트업 300여 개사의 정부지원사업 수주를 도왔습니다.</introduction>
+    <experience>12</experience>
+    <successRate>82</successRate>
+    <consultingCount>280</consultingCount>
+    <specialties>
+      <specialty>TIPS</specialty>
+      <specialty>창업성장기술개발</specialty>
+      <specialty>초기창업패키지</specialty>
+      <specialty>예비창업패키지</specialty>
+    </specialties>
+    <certifications>
+      <certification>기술거래사</certification>
+      <certification>창업보육전문매니저</certification>
+    </certifications>
+    <industries>
+      <industry>IT/소프트웨어</industry>
+      <industry>AI/빅데이터</industry>
+      <industry>핀테크</industry>
+    </industries>
+    <contact>
+      <email>lee.sj@techbridge.kr</email>
+      <phone>02-2345-6789</phone>
+    </contact>
+    <availableTime>평일 10:00-19:00</availableTime>
+    <consultingFee>초기 상담 무료</consultingFee>
+    <rating>4.8</rating>
+    <reviewCount>95</reviewCount>
+  </expert>
+
+  <expert id="expert-003">
+    <name>박민수</name>
+    <title>제조혁신 컨설턴트</title>
+    <organization>스마트팩토리 연구소</organization>
+    <profileImage>/images/experts/default-male.png</profileImage>
+    <introduction>스마트공장, 제조혁신 분야 20년 경력의 전문가입니다. 대기업 및 중견기업의 스마트팩토리 구축 프로젝트를 다수 수행했습니다.</introduction>
+    <experience>20</experience>
+    <successRate>88</successRate>
+    <consultingCount>150</consultingCount>
+    <specialties>
+      <specialty>스마트공장</specialty>
+      <specialty>제조혁신</specialty>
+      <specialty>공정개선</specialty>
+      <specialty>품질경영</specialty>
+    </specialties>
+    <certifications>
+      <certification>품질경영기사</certification>
+      <certification>스마트공장 전문가</certification>
+      <certification>6시그마 MBB</certification>
+    </certifications>
+    <industries>
+      <industry>제조업</industry>
+      <industry>자동차부품</industry>
+      <industry>전자/반도체</industry>
+    </industries>
+    <contact>
+      <email>park.ms@smartfactory.kr</email>
+      <phone>031-3456-7890</phone>
+    </contact>
+    <availableTime>평일 09:00-18:00</availableTime>
+    <consultingFee>현장진단 무료 / 본 컨설팅 별도</consultingFee>
+    <rating>4.9</rating>
+    <reviewCount>67</reviewCount>
+  </expert>
+
+  <expert id="expert-004">
+    <name>최유나</name>
+    <title>수출지원 전문가</title>
+    <organization>글로벌비즈 컨설팅</organization>
+    <profileImage>/images/experts/default-female.png</profileImage>
+    <introduction>KOTRA, 무역협회 출신의 수출지원 전문가입니다. 수출바우처, 해외전시회 지원 등 글로벌 진출 분야에서 풍부한 경험을 보유하고 있습니다.</introduction>
+    <experience>10</experience>
+    <successRate>80</successRate>
+    <consultingCount>200</consultingCount>
+    <specialties>
+      <specialty>수출바우처</specialty>
+      <specialty>해외전시회</specialty>
+      <specialty>수출초보기업</specialty>
+      <specialty>FTA 활용</specialty>
+    </specialties>
+    <certifications>
+      <certification>국제무역사</certification>
+      <certification>관세사</certification>
+    </certifications>
+    <industries>
+      <industry>소비재</industry>
+      <industry>화장품/뷰티</industry>
+      <industry>식품</industry>
+      <industry>제조업</industry>
+    </industries>
+    <contact>
+      <email>choi.yn@globalbiz.kr</email>
+      <phone>02-4567-8901</phone>
+    </contact>
+    <availableTime>평일 09:00-17:00</availableTime>
+    <consultingFee>초기 상담 30분 무료</consultingFee>
+    <rating>4.7</rating>
+    <reviewCount>82</reviewCount>
+  </expert>
+
+  <expert id="expert-005">
+    <name>정대호</name>
+    <title>R&amp;D 기획 전문가</title>
+    <organization>이노베이션 랩</organization>
+    <profileImage>/images/experts/default-male.png</profileImage>
+    <introduction>산업통상자원부, 과학기술정보통신부 R&amp;D 과제 기획 및 수행 전문가입니다. 국책과제 PM 경험을 바탕으로 체계적인 과제 기획을 지원합니다.</introduction>
+    <experience>18</experience>
+    <successRate>78</successRate>
+    <consultingCount>180</consultingCount>
+    <specialties>
+      <specialty>국가 R&amp;D</specialty>
+      <specialty>산업기술혁신</specialty>
+      <specialty>연구개발특구</specialty>
+      <specialty>기술이전</specialty>
+    </specialties>
+    <certifications>
+      <certification>기술사(정보통신)</certification>
+      <certification>기술거래사</certification>
+      <certification>변리사</certification>
+    </certifications>
+    <industries>
+      <industry>IT/소프트웨어</industry>
+      <industry>바이오/헬스케어</industry>
+      <industry>에너지/환경</industry>
+      <industry>소재/부품</industry>
+    </industries>
+    <contact>
+      <email>jung.dh@innovationlab.kr</email>
+      <phone>042-5678-9012</phone>
+    </contact>
+    <availableTime>평일 10:00-18:00</availableTime>
+    <consultingFee>과제 기획 패키지 별도 문의</consultingFee>
+    <rating>4.8</rating>
+    <reviewCount>54</reviewCount>
+  </expert>
+
+  <expert id="expert-006">
+    <name>한지영</name>
+    <title>ESG/친환경 전문가</title>
+    <organization>그린컨설팅 그룹</organization>
+    <profileImage>/images/experts/default-female.png</profileImage>
+    <introduction>탄소중립, ESG 경영 관련 정부지원사업 전문가입니다. 환경부, 산업부의 친환경 지원사업 컨설팅을 다수 수행했습니다.</introduction>
+    <experience>8</experience>
+    <successRate>83</successRate>
+    <consultingCount>120</consultingCount>
+    <specialties>
+      <specialty>탄소중립</specialty>
+      <specialty>ESG 경영</specialty>
+      <specialty>친환경 인증</specialty>
+      <specialty>녹색금융</specialty>
+    </specialties>
+    <certifications>
+      <certification>환경영향평가사</certification>
+      <certification>에너지관리기사</certification>
+      <certification>탄소경영 전문가</certification>
+    </certifications>
+    <industries>
+      <industry>제조업</industry>
+      <industry>에너지/환경</industry>
+      <industry>건설/건축</industry>
+    </industries>
+    <contact>
+      <email>han.jy@greenconsulting.kr</email>
+      <phone>02-6789-0123</phone>
+    </contact>
+    <availableTime>평일 09:00-18:00</availableTime>
+    <consultingFee>ESG 진단 무료</consultingFee>
+    <rating>4.6</rating>
+    <reviewCount>43</reviewCount>
+  </expert>
+
+  <expert id="expert-007">
+    <name>오성민</name>
+    <title>사업계획서 작성 전문가</title>
+    <organization>비즈플랜 컨설팅</organization>
+    <profileImage>/images/experts/default-male.png</profileImage>
+    <introduction>정부지원사업 사업계획서 작성 전문가로, 연간 100건 이상의 사업계획서를 검토하고 작성을 지원합니다. IR 피칭 코칭도 함께 진행합니다.</introduction>
+    <experience>7</experience>
+    <successRate>75</successRate>
+    <consultingCount>350</consultingCount>
+    <specialties>
+      <specialty>사업계획서 작성</specialty>
+      <specialty>IR 피칭</specialty>
+      <specialty>투자유치</specialty>
+      <specialty>비즈니스 모델</specialty>
+    </specialties>
+    <certifications>
+      <certification>경영지도사</certification>
+      <certification>창업보육전문매니저</certification>
+    </certifications>
+    <industries>
+      <industry>IT/소프트웨어</industry>
+      <industry>서비스업</industry>
+      <industry>유통/커머스</industry>
+      <industry>콘텐츠/미디어</industry>
+    </industries>
+    <contact>
+      <email>oh.sm@bizplan.kr</email>
+      <phone>02-7890-1234</phone>
+    </contact>
+    <availableTime>평일 10:00-20:00, 주말 상담 가능</availableTime>
+    <consultingFee>사업계획서 검토 5만원~</consultingFee>
+    <rating>4.7</rating>
+    <reviewCount>156</reviewCount>
+  </expert>
+
+  <expert id="expert-008">
+    <name>임서연</name>
+    <title>고용/인력 지원 전문가</title>
+    <organization>HR솔루션 파트너스</organization>
+    <profileImage>/images/experts/default-female.png</profileImage>
+    <introduction>고용노동부 인력지원사업, 청년고용 지원사업 전문가입니다. 기업의 인력 채용부터 교육훈련까지 정부지원을 활용한 HR 솔루션을 제공합니다.</introduction>
+    <experience>9</experience>
+    <successRate>86</successRate>
+    <consultingCount>230</consultingCount>
+    <specialties>
+      <specialty>청년채용</specialty>
+      <specialty>일자리안정자금</specialty>
+      <specialty>직업훈련</specialty>
+      <specialty>고용장려금</specialty>
+    </specialties>
+    <certifications>
+      <certification>공인노무사</certification>
+      <certification>직업상담사 1급</certification>
+    </certifications>
+    <industries>
+      <industry>전 산업</industry>
+    </industries>
+    <contact>
+      <email>lim.sy@hrsolution.kr</email>
+      <phone>02-8901-2345</phone>
+    </contact>
+    <availableTime>평일 09:00-18:00</availableTime>
+    <consultingFee>고용지원 진단 무료</consultingFee>
+    <rating>4.8</rating>
+    <reviewCount>89</reviewCount>
+  </expert>
+
+</experts>
