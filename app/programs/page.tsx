@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
+import { useAuth } from "@/lib/AuthContext"
+import { supabase } from "@/lib/supabase"
 import {
   Search,
   Building,
@@ -18,6 +20,8 @@ import {
   Inbox,
   RefreshCw,
   ExternalLink,
+  Bookmark,
+  BookmarkCheck,
 } from "lucide-react"
 
 // ============================================
@@ -52,6 +56,12 @@ interface ProgramsResponse {
   lastUpdated: string
 }
 
+interface BookmarkItem {
+  id: string
+  program_id: string
+  program_name: string
+}
+
 // ============================================
 // 필터 옵션
 // ============================================
@@ -78,11 +88,18 @@ const STATUS_OPTIONS = [
 ]
 
 export default function ProgramsPage() {
+  const { user } = useAuth()
+  
   const [programs, setPrograms] = useState<GovernmentProgram[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dataSource, setDataSource] = useState("")
   const [totalAvailable, setTotalAvailable] = useState(0)
+
+  // 북마크 상태
+  const [bookmarks, setBookmarks] = useState<Set<string>>(new Set())
+  const [bookmarkLoading, setBookmarkLoading] = useState<string | null>(null)
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   // 필터 상태
   const [searchQuery, setSearchQuery] = useState("")
@@ -93,6 +110,80 @@ export default function ProgramsPage() {
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
+
+  // ============================================
+  // 북마크 로드
+  // ============================================
+  const loadBookmarks = useCallback(async () => {
+    if (!user) {
+      setBookmarks(new Set())
+      return
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('bookmarks')
+        .select('program_id')
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      const bookmarkSet = new Set(data?.map(b => b.program_id) || [])
+      setBookmarks(bookmarkSet)
+    } catch (error) {
+      console.error('북마크 로드 오류:', error)
+    }
+  }, [user])
+
+  // ============================================
+  // 북마크 토글
+  // ============================================
+  const toggleBookmark = async (program: GovernmentProgram) => {
+    if (!user) {
+      setShowLoginModal(true)
+      return
+    }
+
+    setBookmarkLoading(program.id)
+
+    try {
+      const isBookmarked = bookmarks.has(program.id)
+
+      if (isBookmarked) {
+        // 북마크 제거
+        const { error } = await supabase
+          .from('bookmarks')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('program_id', program.id)
+
+        if (error) throw error
+
+        setBookmarks(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(program.id)
+          return newSet
+        })
+      } else {
+        // 북마크 추가
+        const { error } = await supabase
+          .from('bookmarks')
+          .insert({
+            user_id: user.id,
+            program_id: program.id,
+            program_name: program.title
+          })
+
+        if (error) throw error
+
+        setBookmarks(prev => new Set([...prev, program.id]))
+      }
+    } catch (error) {
+      console.error('북마크 토글 오류:', error)
+    } finally {
+      setBookmarkLoading(null)
+    }
+  }
 
   // ============================================
   // 데이터 로드
@@ -137,6 +228,11 @@ export default function ProgramsPage() {
   useEffect(() => {
     fetchPrograms()
   }, [fetchPrograms])
+
+  // 북마크 로드
+  useEffect(() => {
+    loadBookmarks()
+  }, [loadBookmarks])
 
   // 페이지 리셋 (필터 변경 시)
   useEffect(() => {
@@ -298,6 +394,12 @@ export default function ProgramsPage() {
                   <Filter size={16} className="me-1" />
                   맞춤 필터링
                 </span>
+                {user && (
+                  <span className="badge bg-white text-primary px-3 py-2">
+                    <Bookmark size={16} className="me-1" />
+                    북마크 {bookmarks.size}개
+                  </span>
+                )}
                 <button 
                   className="badge bg-white bg-opacity-25 text-white px-3 py-2 border-0"
                   onClick={() => fetchPrograms(true)}
@@ -440,12 +542,30 @@ export default function ProgramsPage() {
                       data-aos-delay={index * 30}
                     >
                       <div className="card-body p-4 d-flex flex-column">
-                        {/* 상단: 카테고리 & 상태 */}
+                        {/* 상단: 카테고리 & 상태 & 북마크 */}
                         <div className="d-flex justify-content-between align-items-start mb-3">
-                          <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-7">
-                            {program.category}
-                          </span>
-                          <StatusBadge status={program.status} daysLeft={program.daysLeft} />
+                          <div className="d-flex align-items-center gap-2">
+                            <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-7">
+                              {program.category}
+                            </span>
+                            <StatusBadge status={program.status} daysLeft={program.daysLeft} />
+                          </div>
+                          {/* 북마크 버튼 */}
+                          <button
+                            className={`btn btn-sm p-1 ${bookmarks.has(program.id) ? 'text-warning' : 'text-muted'}`}
+                            onClick={() => toggleBookmark(program)}
+                            disabled={bookmarkLoading === program.id}
+                            title={bookmarks.has(program.id) ? '북마크 해제' : '북마크 추가'}
+                            style={{ background: 'transparent', border: 'none' }}
+                          >
+                            {bookmarkLoading === program.id ? (
+                              <span className="spinner-border spinner-border-sm"></span>
+                            ) : bookmarks.has(program.id) ? (
+                              <BookmarkCheck size={20} />
+                            ) : (
+                              <Bookmark size={20} />
+                            )}
+                          </button>
                         </div>
 
                         {/* 사업명 */}
@@ -475,7 +595,7 @@ export default function ProgramsPage() {
                             : program.description || "상세내용은 공고를 확인해주세요."}
                         </p>
 
-                        {/* 마감일 정보 (개선됨) */}
+                        {/* 마감일 정보 */}
                         <div className="mb-3">
                           <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
                             <div className="d-flex align-items-center">
@@ -605,19 +725,48 @@ export default function ProgramsPage() {
               )}
             </>
           )}
-
-          {/* 데이터 출처 
-          {dataSource && (
-            <div className="text-center mt-5" data-aos="fade-up">
-              <p className="text-muted fs-7 mb-0">
-                <i className="bi bi-info-circle me-2"></i>
-                {dataSource} | 마감 임박순 정렬
-              </p>
-            </div>
-          )}
-          */}
         </div>
       </section>
+
+      {/* 로그인 유도 모달 */}
+      {showLoginModal && (
+        <div 
+          className="modal fade show d-block" 
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => e.target === e.currentTarget && setShowLoginModal(false)}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content rounded-4">
+              <div className="modal-body p-5 text-center">
+                <div className="icon-shape icon-80 bg-warning bg-opacity-10 rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
+                  <Bookmark className="text-warning" size={40} />
+                </div>
+                <h4 className="mb-3">북마크하려면 로그인이 필요해요</h4>
+                <p className="text-muted mb-4">
+                  관심 있는 지원사업을 저장하고,<br/>
+                  마감 알림을 받으시려면 로그인해주세요.
+                </p>
+                <div className="d-flex gap-3 justify-content-center">
+                  <button 
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowLoginModal(false)}
+                  >
+                    다음에 할게요
+                  </button>
+                  <Link href="/login" className="btn btn-primary">
+                    로그인하기
+                  </Link>
+                </div>
+                <div className="mt-3">
+                  <small className="text-muted">
+                    아직 계정이 없으신가요? <Link href="/register" className="text-primary">회원가입</Link>
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }

@@ -1,14 +1,21 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuth } from '@/lib/AuthContext'
 
 export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
-
+	const { user, profile, loading, signOut } = useAuth()
 	const [isAccordion, setIsAccordion] = useState(0)
 
 	const handleAccordion = (key: any) => {
 		setIsAccordion(prevState => prevState === key ? null : key)
 	}
+
+	const handleLogout = async () => {
+		await signOut()
+		handleMobileMenu()
+	}
+
 	return (
 		<>
 			<div className="mobile-menu-overlay" onClick={handleMobileMenu} />
@@ -38,29 +45,74 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 								<nav>
 									<ul className="mobile-menu ps-0">
 										<li>
-											<Link href="/">홈</Link>
+											<Link href="/" onClick={handleMobileMenu}>홈</Link>
 										</li>
 										<li>
-											<Link href="/diagnosis">AI 진단</Link>
+											<Link href="/diagnosis" onClick={handleMobileMenu}>AI 진단</Link>
 										</li>
 										<li>
-											<Link href="/programs">지원사업</Link>
+											<Link href="/programs" onClick={handleMobileMenu}>지원사업</Link>
 										</li>
 										<li>
-											<Link href="/experts">전문가</Link>
+											<Link href="/experts" onClick={handleMobileMenu}>전문가</Link>
 										</li>
 										<li>
-											<Link href="/pricing">요금제</Link>
+											<Link href="/pricing" onClick={handleMobileMenu}>요금제</Link>
 										</li>
 										<li>
-											<Link href="/about">소개</Link>
+											<Link href="/about" onClick={handleMobileMenu}>소개</Link>
 										</li>
 										<li>
-											<Link href="/contact">문의하기</Link>
+											<Link href="/contact" onClick={handleMobileMenu}>문의하기</Link>
 										</li>
 									</ul>
 								</nav>
 							</div>
+
+							{/* 로그인/회원가입 영역 */}
+							{!loading && (
+								<div className="mobile-menu-wrap mobile-header-border mt-3">
+									<nav>
+										<ul className="mobile-menu ps-0">
+											{user ? (
+												<>
+													<li>
+														<Link href="/mypage" onClick={handleMobileMenu}>
+															<i className="bi bi-person-circle me-2"></i>
+															마이페이지
+														</Link>
+													</li>
+													<li>
+														<button 
+															onClick={handleLogout}
+															className="border-0 bg-transparent text-start w-100 p-0"
+															style={{ color: 'inherit', fontSize: 'inherit' }}
+														>
+															<i className="bi bi-box-arrow-right me-2"></i>
+															로그아웃
+														</button>
+													</li>
+												</>
+											) : (
+												<>
+													<li>
+														<Link href="/login" onClick={handleMobileMenu}>
+															<i className="bi bi-person me-2"></i>
+															로그인
+														</Link>
+													</li>
+													<li>
+														<Link href="/register" onClick={handleMobileMenu}>
+															<i className="bi bi-person-plus me-2"></i>
+															회원가입
+														</Link>
+													</li>
+												</>
+											)}
+										</ul>
+									</nav>
+								</div>
+							)}
 						</div>
 					</div>
 					<div className="tgmobile__menu-bottom mt-auto">
@@ -83,11 +135,21 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 								</Link>
 							</div>
 						</div>
-						{/* AI 진단 시작 버튼 */}
+						{/* 로그인 상태에 따른 버튼 */}
 						<div className="mt-4">
-							<Link href="/diagnosis" className="btn btn-primary w-100 py-3" onClick={handleMobileMenu}>
-								AI 진단 시작하기
-							</Link>
+							{!loading && (
+								<>
+									{user ? (
+										<Link href="/mypage" className="btn btn-primary w-100 py-3" onClick={handleMobileMenu}>
+											마이페이지
+										</Link>
+									) : (
+										<Link href="/register" className="btn btn-primary w-100 py-3" onClick={handleMobileMenu}>
+											무료 시작하기
+										</Link>
+									)}
+								</>
+							)}
 						</div>
 					</div>
 				</div>

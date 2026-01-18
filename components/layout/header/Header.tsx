@@ -1,7 +1,16 @@
+'use client'
+
 import Link from 'next/link'
+import { useAuth } from '@/lib/AuthContext'
 import MobileMenu from '../MobileMenu'
 
 export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) {
+	const { user, profile, loading, signOut } = useAuth()
+
+	const handleLogout = async () => {
+		await signOut()
+	}
+
 	return (
 		<>
 			<header>
@@ -18,13 +27,41 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
 								</li>
 							</ul>
 							<div className="d-flex justify-content-center gap-3 align-self-stretch">
-								<a href="mailto:support@bizfit.kr" className="fs-7 d-flex align-items-center px-3">
+								{/* 로그인 상태에 따른 표시 */}
+								{!loading && (
+									<>
+										{user ? (
+											<>
+												<Link href="/mypage" className="fs-7 d-flex align-items-center px-3">
+													<i className="bi bi-person-circle text-white me-1"></i>
+													<span className="text-white">{profile?.name || '마이페이지'}</span>
+												</Link>
+												<button 
+													onClick={handleLogout}
+													className="fs-7 d-flex align-items-center border-0 bg-transparent"
+													style={{ cursor: 'pointer' }}
+												>
+													<i className="bi bi-box-arrow-right text-white me-1"></i>
+													<span className="text-white">로그아웃</span>
+												</button>
+											</>
+										) : (
+											<>
+												<Link href="/login" className="fs-7 d-flex align-items-center px-3">
+													<i className="bi bi-person text-white me-1"></i>
+													<span className="text-white">로그인</span>
+												</Link>
+												<Link href="/register" className="fs-7 d-flex align-items-center">
+													<i className="bi bi-person-plus text-white me-1"></i>
+													<span className="text-white">회원가입</span>
+												</Link>
+											</>
+										)}
+									</>
+								)}
+								<a href="mailto:support@bizfit.kr" className="fs-7 d-flex align-items-center px-3 d-none d-md-flex">
 									<i className="ri-mail-open-line text-white"></i>
 									<span className="text-white">support@bizfit.kr</span>
-								</a>
-								<a href="tel:1588-0000" className="fs-7 d-flex align-items-center">
-									<i className="ri-phone-line text-white"></i>
-									<span className="text-white">1588-0000</span>
 								</a>
 							</div>
 						</div>
@@ -73,17 +110,32 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
 								</ul>
 							</div>
 							<div className="d-flex align-items-center gap-4">
-								<Link
-									href="/diagnosis"
-									className="btn btn-outline-secondary bg-transparent text-white rounded-0 border-white border-opacity-25 d-none d-md-flex"
-								>
-									<span className="text-white">AI 진단 시작</span>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-										<g clipPath="url(#clip0_816_117)">
-											<path d="M15.8167 7.55759C15.8165 7.5574 15.8163 7.55719 15.8161 7.557L12.5504 4.307C12.3057 4.06353 11.91 4.06444 11.6665 4.30912C11.423 4.55378 11.4239 4.9495 11.6686 5.193L13.8612 7.375H0.625C0.279813 7.375 0 7.65481 0 8C0 8.34519 0.279813 8.625 0.625 8.625H13.8612L11.6686 10.807C11.4239 11.0505 11.423 11.4462 11.6665 11.6909C11.91 11.9356 12.3058 11.9364 12.5504 11.693L15.8162 8.443C15.8163 8.44281 15.8165 8.44259 15.8167 8.4424C16.0615 8.19809 16.0607 7.80109 15.8167 7.55759Z" fill="white" />
-										</g>
-									</svg>
-								</Link>
+								{/* 로그인 상태에 따른 버튼 */}
+								{!loading && (
+									<>
+										{user ? (
+											<Link
+												href="/mypage"
+												className="btn btn-outline-secondary bg-transparent text-white rounded-0 border-white border-opacity-25 d-none d-md-flex"
+											>
+												<span className="text-white">마이페이지</span>
+												<i className="bi bi-person-circle ms-2"></i>
+											</Link>
+										) : (
+											<Link
+												href="/register"
+												className="btn btn-outline-secondary bg-transparent text-white rounded-0 border-white border-opacity-25 d-none d-md-flex"
+											>
+												<span className="text-white">무료 시작하기</span>
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+													<g clipPath="url(#clip0_816_117)">
+														<path d="M15.8167 7.55759C15.8165 7.5574 15.8163 7.55719 15.8161 7.557L12.5504 4.307C12.3057 4.06353 11.91 4.06444 11.6665 4.30912C11.423 4.55378 11.4239 4.9495 11.6686 5.193L13.8612 7.375H0.625C0.279813 7.375 0 7.65481 0 8C0 8.34519 0.279813 8.625 0.625 8.625H13.8612L11.6686 10.807C11.4239 11.0505 11.423 11.4462 11.6665 11.6909C11.91 11.9356 12.3058 11.9364 12.5504 11.693L15.8162 8.443C15.8163 8.44281 15.8165 8.44259 15.8167 8.4424C16.0615 8.19809 16.0607 7.80109 15.8167 7.55759Z" fill="white" />
+													</g>
+												</svg>
+											</Link>
+										)}
+									</>
+								)}
 								<div className="burger-icon burger-icon-white border rounded-3 top-0 end-0 position-relative" onClick={handleMobileMenu}>
 									<span className="burger-icon-top"></span>
 									<span className="burger-icon-mid"></span>

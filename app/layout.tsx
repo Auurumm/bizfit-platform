@@ -15,6 +15,7 @@ import "/public/assets/css/style.css"
 
 import type { Metadata } from "next"
 import { Playfair_Display, Roboto } from "next/font/google"
+import { AuthProvider } from '@/lib/AuthContext'
 
 const playfairItalic = Playfair_Display({
 	weight: '500',
@@ -50,7 +51,9 @@ export default function RootLayout({
 	return (
 		<html lang="ko">
 			<body className={`${playfairItalic.variable} ${roboto.variable} ${robotoHeading.variable} law-firm`}>
-				{children}
+				<AuthProvider>
+					{children}
+				</AuthProvider>
 			</body>
 		</html>
 	)

@@ -1,465 +1,962 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
+import Layout from "@/components/layout/Layout"
+import { useAuth } from "@/lib/AuthContext"
 
-// 전문가 타입
+// ⚠️ Google Apps Script 웹 앱 URL을 여기에 입력하세요
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjCdv9Cg3ooAz5E-DE27oOkVhPUCmA_mChScMc5zL_cY81M7EpiK082RSfCVbpn8Xm/exec"
+
 interface Expert {
-  id: string;
-  name: string;
-  title: string;
-  organization: string;
-  profileImage: string;
-  introduction: string;
-  experience: number;
-  successRate: number;
-  consultingCount: number;
-  specialties: string[];
-  certifications: string[];
-  industries: string[];
-  contact: {
-    email: string;
-    phone: string;
-  };
-  availableTime: string;
-  consultingFee: string;
-  rating: number;
-  reviewCount: number;
+	id: string
+	name: string
+	title: string
+	company: string
+	specialties: string[]
+	rating: number
+	reviews: number
+	location: string
+	experience: number
+	price: number
+	availability: string
+	image: string
+	description: string
+	category: string
 }
 
-// 문의 폼 타입
-interface InquiryForm {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  position: string;
-  inquiryType: string;
-  subject: string;
-  message: string;
-  preferredTime: string;
-  privacyConsent: boolean;
-  marketingConsent: boolean;
+interface Review {
+	reviewId: string
+	createdAt: string
+	expertId: string
+	expertName: string
+	authorName: string
+	rating: number
+	content: string
 }
 
-// 문의 유형 옵션
-const inquiryTypes = [
-  { value: "general", label: "일반 문의" },
-  { value: "consultation", label: "상담 요청" },
-  { value: "quote", label: "견적 요청" },
-  { value: "partnership", label: "제휴 문의" },
-];
+interface BookingForm {
+	name: string
+	phone: string
+	email: string
+	company: string
+	position: string
+	consultDate: string
+	topic: string
+	details: string
+}
 
-// 선호 시간 옵션
-const preferredTimes = [
-  { value: "morning", label: "오전 (09:00~12:00)" },
-  { value: "afternoon", label: "오후 (13:00~18:00)" },
-  { value: "evening", label: "저녁 (18:00 이후)" },
-  { value: "anytime", label: "언제든지" },
-];
+interface ReviewForm {
+	authorName: string
+	rating: number
+	content: string
+}
 
-export default function ExpertDetailPage() {
-  const params = useParams();
-  const expertId = params.id as string;
+const categories = [
+	{ id: "all", name: "전체" },
+	{ id: "startup", name: "창업 컨설팅" },
+	{ id: "finance", name: "재무/회계" },
+	{ id: "marketing", name: "마케팅" },
+	{ id: "tech", name: "기술/R&D" },
+	{ id: "legal", name: "법무" },
+	{ id: "hr", name: "인사/조직" },
+]
 
-  const [expert, setExpert] = useState<Expert | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// 기본 이미지 (단일 이미지로 통일)
+const DEFAULT_EXPERT_IMAGE = "/assets/imgs/default-expert.png"
 
-  // 문의 폼 상태
-  const [showInquiryForm, setShowInquiryForm] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+export default function ExpertsPage() {
+	const { user, profile, loading: authLoading } = useAuth()
+	
+	const [experts, setExperts] = useState<Expert[]>([])
+	const [filteredExperts, setFilteredExperts] = useState<Expert[]>([])
+	const [searchTerm, setSearchTerm] = useState("")
+	const [selectedCategory, setSelectedCategory] = useState("all")
+	const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null)
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
+	
+	// 모달 상태
+	const [modalType, setModalType] = useState<"inquiry" | "detail" | "login" | null>(null)
+	
+	// 리뷰 관련 상태
+	const [expertReviews, setExpertReviews] = useState<Review[]>([])
+	const [reviewsLoading, setReviewsLoading] = useState(false)
+	const [showReviewForm, setShowReviewForm] = useState(false)
+	const [reviewForm, setReviewForm] = useState<ReviewForm>({
+		authorName: "",
+		rating: 5,
+		content: ""
+	})
+	const [reviewSubmitStatus, setReviewSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+	
+	// 문의 폼 상태
+	const [bookingForm, setBookingForm] = useState<BookingForm>({
+		name: "",
+		phone: "",
+		email: "",
+		company: "",
+		position: "",
+		consultDate: "",
+		topic: "",
+		details: ""
+	})
+	const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+	const [submitMessage, setSubmitMessage] = useState("")
 
-  const [form, setForm] = useState<InquiryForm>({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    position: "",
-    inquiryType: "consultation",
-    subject: "",
-    message: "",
-    preferredTime: "anytime",
-    privacyConsent: false,
-    marketingConsent: false,
-  });
-
-  // 전문가 정보 로드
-  useEffect(() => {
-    async function loadExpert() {
-      try {
-        const response = await fetch(`/api/experts?id=${expertId}`);
-        const result = await response.json();
-        if (result.success) {
-          setExpert(result.data);
-        } else {
-          setError("전문가 정보를 찾을 수 없습니다.");
-        }
-      } catch {
-        setError("서버 연결 오류가 발생했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    if (expertId) loadExpert();
-  }, [expertId]);
-
-  // 폼 입력 핸들러
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }));
-  };
-
-  // 전화번호 포맷팅
-  const formatPhoneNumber = (value: string) => {
-    const numbers = value.replace(/[^0-9]/g, "");
-    if (numbers.length <= 3) return numbers;
-    if (numbers.length <= 7) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
-    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
-  };
-
-  // 문의 제출
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setSubmitError(null);
-
+	// 전문가 목록 로드
+	const loadExperts = useCallback(async () => {
     try {
-      const response = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          expertId: expert?.id,
-          expertName: expert?.name,
-        }),
-      });
-      const result = await response.json();
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=experts`)
+      const result = await response.json()
+      
       if (result.success) {
-        setSubmitSuccess(true);
-        setShowInquiryForm(false);
-      } else {
-        setSubmitError(result.errors?.join(", ") || "문의 접수에 실패했습니다.");
-      }
-    } catch {
-      setSubmitError("서버 연결 오류가 발생했습니다.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+        // 이미지가 없으면 단일 기본 이미지 적용
+        const expertsWithImages = result.data.map((expert: Expert) => ({
+          ...expert,
+          image: expert.image || DEFAULT_EXPERT_IMAGE
+        }))
+        
+        // 랜덤 셔플
+        const shuffled = [...expertsWithImages].sort(() => Math.random() - 0.5)
+        
+        setExperts(shuffled)
+        setFilteredExperts(shuffled)
+			} else {
+				setError(result.message || "전문가 목록을 불러오는데 실패했습니다.")
+			}
+		} catch (err) {
+			console.error("전문가 로드 오류:", err)
+			setError("서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.")
+		} finally {
+			setLoading(false)
+		}
+	}, [])
 
-  // 별점 렌더링
-  const renderStars = (rating: number) => (
-    <div className="flex items-center gap-0.5">
-      {[...Array(5)].map((_, i) => (
-        <svg
-          key={i}
-          className={`w-5 h-5 ${i < Math.floor(rating) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-          viewBox="0 0 20 20"
-        >
-          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-        </svg>
-      ))}
-      <span className="ml-2 text-lg font-semibold text-gray-900">{rating.toFixed(1)}</span>
-      <span className="text-sm text-gray-500 ml-1">({expert?.reviewCount}개 리뷰)</span>
-    </div>
-  );
+	// 특정 전문가의 리뷰 로드
+	const loadReviews = useCallback(async (expertId: string) => {
+		try {
+			setReviewsLoading(true)
+			const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=reviews&expertId=${expertId}`)
+			const result = await response.json()
+			
+			if (result.success) {
+				setExpertReviews(result.data)
+			}
+		} catch (err) {
+			console.error("리뷰 로드 오류:", err)
+		} finally {
+			setReviewsLoading(false)
+		}
+	}, [])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">전문가 정보를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
+	useEffect(() => {
+		loadExperts()
+	}, [loadExperts])
 
-  if (error || !expert) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <p className="text-gray-600">{error || "전문가를 찾을 수 없습니다."}</p>
-          <Link href="/experts" className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            전문가 목록으로
-          </Link>
-        </div>
-      </div>
-    );
-  }
+	useEffect(() => {
+		let filtered = experts
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 헤더 */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <Link href="/experts" className="inline-flex items-center text-gray-600 hover:text-gray-900">
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            전문가 목록
-          </Link>
-        </div>
-      </header>
+		if (selectedCategory !== "all") {
+			filtered = filtered.filter((expert) => expert.category === selectedCategory)
+		}
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        {/* 성공 메시지 */}
-        {submitSuccess && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-green-800">문의가 접수되었습니다!</h3>
-                <p className="text-sm text-green-700">{expert.name} 전문가가 빠른 시일 내에 연락드릴 예정입니다.</p>
-              </div>
-            </div>
-          </div>
-        )}
+		if (searchTerm) {
+			filtered = filtered.filter(
+				(expert) =>
+					expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+					expert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+					expert.specialties.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase()))
+			)
+		}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 메인 콘텐츠 */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* 프로필 카드 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-start gap-6">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center text-4xl flex-shrink-0">
-                  {expert.name.charAt(0)}
-                </div>
-                <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900">{expert.name}</h1>
-                  <p className="text-lg text-gray-600">{expert.title}</p>
-                  <p className="text-gray-500">{expert.organization}</p>
-                  <div className="mt-3">{renderStars(expert.rating)}</div>
-                </div>
-              </div>
-              <div className="mt-6 grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">{expert.experience}년</p>
-                  <p className="text-sm text-gray-500">경력</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">{expert.successRate}%</p>
-                  <p className="text-sm text-gray-500">성공률</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">{expert.consultingCount}건</p>
-                  <p className="text-sm text-gray-500">상담 이력</p>
-                </div>
-              </div>
-            </div>
+		setFilteredExperts(filtered)
+	}, [experts, selectedCategory, searchTerm])
 
-            {/* 소개 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">전문가 소개</h2>
-              <p className="text-gray-700 leading-relaxed">{expert.introduction}</p>
-            </div>
+	// 상세 모달 열기
+	const openDetailModal = (expert: Expert) => {
+		setSelectedExpert(expert)
+		setModalType("detail")
+		setShowReviewForm(false)
+		setReviewSubmitStatus("idle")
+		loadReviews(expert.id)
+		document.body.style.overflow = 'hidden'
+	}
 
-            {/* 전문분야 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">전문분야</h2>
-              <div className="flex flex-wrap gap-2">
-                {expert.specialties.map((specialty, idx) => (
-                  <span key={idx} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm">{specialty}</span>
-                ))}
-              </div>
-            </div>
+	// 문의 모달 열기 (로그인 체크)
+	const openInquiryModal = (expert: Expert) => {
+		console.log("openInquiryModal called") // 디버깅용
+		console.log("authLoading:", authLoading, "user:", user) // 디버깅용
+		
+		// 아직 인증 상태 확인 중이면 잠시 대기
+		if (authLoading) {
+			console.log("Auth still loading, please wait...")
+			return
+		}
+		
+		// 로그인 체크
+		if (!user) {
+			console.log("User not logged in, showing login modal") // 디버깅용
+			setSelectedExpert(expert)
+			setModalType("login")
+			document.body.style.overflow = 'hidden'
+			return
+		}
 
-            {/* 자격증 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">보유 자격</h2>
-              <ul className="space-y-2">
-                {expert.certifications.map((cert, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-gray-700">
-                    <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {cert}
-                  </li>
-                ))}
-              </ul>
-            </div>
+		console.log("User logged in, showing inquiry modal") // 디버깅용
+		setSelectedExpert(expert)
+		setModalType("inquiry")
+		setSubmitStatus("idle")
+		
+		// 로그인한 사용자 정보 자동 입력
+		setBookingForm({
+			name: profile?.name || "",
+			phone: profile?.phone || "",
+			email: profile?.email || user?.email || "",
+			company: profile?.company || "",
+			position: "",
+			consultDate: "",
+			topic: "",
+			details: ""
+		})
+		document.body.style.overflow = 'hidden'
+	}
 
-            {/* 산업분야 */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">담당 산업</h2>
-              <div className="flex flex-wrap gap-2">
-                {expert.industries.map((industry, idx) => (
-                  <span key={idx} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">{industry}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+	const closeModal = () => {
+		setModalType(null)
+		setSelectedExpert(null)
+		setShowReviewForm(false)
+		document.body.style.overflow = 'auto'
+	}
 
-          {/* 사이드바 */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">상담 안내</h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">상담 가능 시간</p>
-                  <p className="font-medium text-gray-900">{expert.availableTime}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">상담 비용</p>
-                  <p className="font-medium text-gray-900">{expert.consultingFee}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">연락처</p>
-                  <p className="font-medium text-gray-900">{expert.contact.phone}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowInquiryForm(true)}
-                className="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                문의하기
-              </button>
-              <p className="mt-3 text-xs text-gray-500 text-center">문의 접수 후 1~2 영업일 내 연락드립니다.</p>
-            </div>
+	const handleFormChange = (field: keyof BookingForm, value: string) => {
+		setBookingForm(prev => ({ ...prev, [field]: value }))
+	}
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">더 많은 전문가가 필요하신가요?</h3>
-              <p className="text-sm text-gray-600 mb-4">AI 진단을 통해 기업에 맞는 전문가를 추천받으세요.</p>
-              <Link href="/diagnosis" className="inline-block w-full text-center py-2 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50">
-                AI 진단받기
-              </Link>
-            </div>
-          </div>
-        </div>
-      </main>
+	// 문의 제출
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		
+		if (!bookingForm.name || !bookingForm.phone || !bookingForm.email || !bookingForm.topic) {
+			setSubmitStatus("error")
+			setSubmitMessage("필수 항목을 모두 입력해주세요.")
+			return
+		}
 
-      {/* 문의하기 모달 */}
-      {showInquiryForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">문의하기</h2>
-                <p className="text-sm text-gray-500">{expert.name} 전문가에게 문의</p>
-              </div>
-              <button onClick={() => setShowInquiryForm(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+		setSubmitStatus("loading")
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              {submitError && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{submitError}</div>
-              )}
+		try {
+			await fetch(GOOGLE_SCRIPT_URL, {
+				method: "POST",
+				mode: "no-cors",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					action: "submit",
+					...bookingForm,
+					expertName: selectedExpert?.name || "",
+					expertTitle: selectedExpert?.title || "",
+					inquiryType: "consultation",
+					userId: user?.id || ""  // 회원 ID 추가
+				}),
+			})
 
-              {/* 문의자 정보 */}
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-4">문의자 정보</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">이름 <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" value={form.name} onChange={handleInputChange} required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="홍길동" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">이메일 <span className="text-red-500">*</span></label>
-                    <input type="email" name="email" value={form.email} onChange={handleInputChange} required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="email@company.com" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">연락처 <span className="text-red-500">*</span></label>
-                    <input type="tel" name="phone" value={form.phone}
-                      onChange={(e) => setForm((prev) => ({ ...prev, phone: formatPhoneNumber(e.target.value) }))} required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="010-0000-0000" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">회사명 <span className="text-red-500">*</span></label>
-                    <input type="text" name="company" value={form.company} onChange={handleInputChange} required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="(주)회사명" />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">직책</label>
-                    <input type="text" name="position" value={form.position} onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="대표이사" />
-                  </div>
-                </div>
-              </div>
+			setSubmitStatus("success")
+			setSubmitMessage("상담 문의가 성공적으로 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.")
+			
+			setTimeout(() => {
+				closeModal()
+			}, 3000)
+		} catch (error) {
+			setSubmitStatus("error")
+			setSubmitMessage("문의 접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+		}
+	}
 
-              {/* 문의 내용 */}
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-4">문의 내용</h3>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">문의 유형 <span className="text-red-500">*</span></label>
-                      <select name="inquiryType" value={form.inquiryType} onChange={handleInputChange} required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        {inquiryTypes.map((type) => (<option key={type.value} value={type.value}>{type.label}</option>))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">선호 연락 시간</label>
-                      <select name="preferredTime" value={form.preferredTime} onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        {preferredTimes.map((time) => (<option key={time.value} value={time.value}>{time.label}</option>))}
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">문의 제목 <span className="text-red-500">*</span></label>
-                    <input type="text" name="subject" value={form.subject} onChange={handleInputChange} required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="정부지원사업 신청 관련 상담 요청" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">문의 내용 <span className="text-red-500">*</span></label>
-                    <textarea name="message" value={form.message} onChange={handleInputChange} required rows={5}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="문의하실 내용을 자세히 작성해주세요." />
-                  </div>
-                </div>
-              </div>
+	// 리뷰 제출
+	const handleReviewSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		
+		if (!reviewForm.content.trim()) {
+			return
+		}
 
-              {/* 동의 사항 */}
-              <div className="space-y-3 pt-4 border-t border-gray-200">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" name="privacyConsent" checked={form.privacyConsent} onChange={handleInputChange} required
-                    className="w-5 h-5 mt-0.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                  <span className="text-sm text-gray-700">
-                    <span className="text-red-500">[필수]</span> 개인정보 수집 및 이용에 동의합니다.
-                  </span>
-                </label>
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" name="marketingConsent" checked={form.marketingConsent} onChange={handleInputChange}
-                    className="w-5 h-5 mt-0.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                  <span className="text-sm text-gray-700">[선택] 마케팅 정보 수신에 동의합니다.</span>
-                </label>
-              </div>
+		setReviewSubmitStatus("loading")
 
-              {/* 제출 버튼 */}
-              <div className="flex gap-3">
-                <button type="button" onClick={() => setShowInquiryForm(false)}
-                  className="flex-1 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50">
-                  취소
-                </button>
-                <button type="submit" disabled={submitting}
-                  className="flex-1 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed">
-                  {submitting ? "제출 중..." : "문의 제출"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+		try {
+			await fetch(GOOGLE_SCRIPT_URL, {
+				method: "POST",
+				mode: "no-cors",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					action: "submitReview",
+					expertId: selectedExpert?.id || "",
+					expertName: selectedExpert?.name || "",
+					authorName: reviewForm.authorName || profile?.name || "익명",
+					rating: reviewForm.rating,
+					content: reviewForm.content
+				}),
+			})
+
+			setReviewSubmitStatus("success")
+			setReviewForm({ authorName: "", rating: 5, content: "" })
+			
+			// 리뷰 목록 새로고침
+			setTimeout(() => {
+				if (selectedExpert) {
+					loadReviews(selectedExpert.id)
+				}
+				loadExperts() // 전문가 목록도 새로고침 (평점 업데이트)
+				setShowReviewForm(false)
+				setReviewSubmitStatus("idle")
+			}, 1500)
+		} catch (error) {
+			setReviewSubmitStatus("error")
+		}
+	}
+
+	// 별점 렌더링
+	const renderStars = (rating: number, interactive: boolean = false, onChange?: (rating: number) => void) => {
+		return (
+			<div className="d-flex gap-1">
+				{[1, 2, 3, 4, 5].map((star) => (
+					<i
+						key={star}
+						className={`bi ${star <= rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'} ${interactive ? 'cursor-pointer' : ''}`}
+						style={interactive ? { cursor: 'pointer', fontSize: '1.5rem' } : {}}
+						onClick={() => interactive && onChange && onChange(star)}
+					></i>
+				))}
+			</div>
+		)
+	}
+
+	return (
+		<Layout>
+			{/* 페이지 헤더 */}
+			<section className="page-header position-relative overflow-hidden pt-160 pb-100" 
+				style={{ backgroundColor: '#152833' }}>
+				<div className="container position-relative z-1">
+					<div className="text-center">
+						<span className="btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2 d-inline-block mb-3">
+							전문가 네트워크
+						</span>
+						<h1 className="text-white ds-3 mb-3">전문가 매칭</h1>
+						<p className="text-white text-opacity-75 fs-5">
+							분야별 전문가와 1:1 상담을 통해 맞춤형 컨설팅을 받아보세요
+						</p>
+					</div>
+				</div>
+			</section>
+
+			{/* 검색 및 필터 */}
+			<section className="py-5 bg-white border-bottom">
+				<div className="container">
+					<div className="row align-items-center g-4">
+						<div className="col-lg-4">
+							<div className="position-relative">
+								<input
+									type="text"
+									className="form-control form-control-lg ps-5"
+									placeholder="전문가 이름, 전문 분야로 검색"
+									value={searchTerm}
+									onChange={(e) => setSearchTerm(e.target.value)}
+								/>
+								<i className="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+							</div>
+						</div>
+						<div className="col-lg-8">
+							<div className="d-flex flex-wrap gap-2 align-items-center">
+								{categories.map((category) => (
+									<button
+										key={category.id}
+										onClick={() => setSelectedCategory(category.id)}
+										className={`btn ${selectedCategory === category.id 
+											? 'btn-primary' 
+											: 'btn-outline-secondary'}`}
+									>
+										{category.name}
+									</button>
+								))}
+								<button
+									onClick={loadExperts}
+									className="btn btn-outline-secondary ms-auto"
+									title="새로고침"
+								>
+									<i className="bi bi-arrow-clockwise"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* 전문가 목록 */}
+			<section className="py-120 bg-secondary-2">
+				<div className="container">
+					{error && (
+						<div className="alert alert-warning mb-5">
+							<div className="d-flex align-items-center justify-content-between">
+								<div>
+									<i className="bi bi-exclamation-triangle me-2"></i>
+									{error}
+								</div>
+								<button onClick={loadExperts} className="btn btn-sm btn-outline-warning">
+									다시 시도
+								</button>
+							</div>
+						</div>
+					)}
+
+					{loading ? (
+						<div className="text-center py-8">
+							<div className="spinner-border text-primary" role="status">
+								<span className="visually-hidden">Loading...</span>
+							</div>
+							<p className="mt-3 text-muted">전문가 목록을 불러오는 중...</p>
+						</div>
+					) : filteredExperts.length === 0 ? (
+						<div className="text-center py-8">
+							<i className="bi bi-people fs-1 text-muted d-block mb-3"></i>
+							<h5>검색 결과가 없습니다</h5>
+							<p className="text-muted">다른 검색어나 필터를 시도해보세요</p>
+							<button 
+								className="btn btn-outline-primary mt-3"
+								onClick={() => { setSearchTerm(""); setSelectedCategory("all"); }}
+							>
+								전체 전문가 보기
+							</button>
+						</div>
+					) : (
+						<>
+							<div className="mb-4">
+								<p className="text-muted mb-0">
+									총 <strong className="text-dark">{filteredExperts.length}</strong>명의 전문가
+								</p>
+							</div>
+
+							<div className="row g-4">
+								{filteredExperts.map((expert) => (
+									<div key={expert.id} className="col-lg-4 col-md-6">
+										<div className="card-team overflow-hidden bg-white rounded-4 shadow-sm h-100 hover-up">
+											<div className="position-relative">
+												<img
+													src={expert.image}
+													alt={expert.name}
+													className="w-100"
+													style={{ height: '280px', objectFit: 'cover'  }}
+													referrerPolicy="no-referrer"
+													onError={(e) => {
+														const target = e.target as HTMLImageElement
+														target.src = DEFAULT_EXPERT_IMAGE
+													}}
+												/>
+											</div>
+											<div className="p-4">
+												<div className="d-flex justify-content-between align-items-start mb-2">
+													<div>
+														<p className="btn-text text-primary mb-1">{expert.title}</p>
+														<h5 className="mb-1">{expert.name}</h5>
+														<p className="text-muted small mb-0">{expert.company}</p>
+													</div>
+													<div className="text-end">
+														{expert.reviews > 0 ? (
+															<>
+																<div className="d-flex align-items-center gap-1">
+																	<i className="bi bi-star-fill text-warning"></i>
+																	<span className="fw-bold">{expert.rating.toFixed(1)}</span>
+																</div>
+																<small className="text-muted">리뷰 {expert.reviews}개</small>
+															</>
+														) : (
+															<small className="text-muted">리뷰 없음</small>
+														)}
+													</div>
+												</div>
+												
+												<div className="d-flex flex-wrap gap-1 my-3">
+													{expert.specialties.slice(0, 3).map((specialty, index) => (
+														<span 
+															key={index} 
+															className="badge bg-primary bg-opacity-10 text-primary"
+														>
+															{specialty}
+														</span>
+													))}
+													{expert.specialties.length > 3 && (
+														<span className="badge bg-secondary bg-opacity-10 text-secondary">
+															+{expert.specialties.length - 3}
+														</span>
+													)}
+												</div>
+
+												<div className="d-flex justify-content-between align-items-center pt-3 border-top">
+													<div>
+														<i className="bi bi-geo-alt text-muted me-1"></i>
+														<small className="text-muted">{expert.location}</small>
+													</div>
+													<div>
+														<i className="bi bi-briefcase text-muted me-1"></i>
+														<small className="text-muted">경력 {expert.experience}년</small>
+													</div>
+												</div>
+
+												<div className="d-flex justify-content-between align-items-center mt-3">
+													<div>
+														<span className="fs-5 fw-bold text-primary">{expert.price.toLocaleString()}원</span>
+														<small className="text-muted">/시간</small>
+													</div>
+													<span className="badge bg-success bg-opacity-10 text-success">
+														<i className="bi bi-clock me-1"></i>
+														{expert.availability}
+													</span>
+												</div>
+
+												<div className="d-flex gap-2 mt-4">
+													<button 
+														onClick={() => openDetailModal(expert)}
+														className="btn btn-outline-secondary flex-fill"
+													>
+														상세보기
+													</button>
+													<button 
+														onClick={() => openInquiryModal(expert)}
+														className="btn btn-primary flex-fill"
+													>
+														문의하기
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								))}
+							</div>
+						</>
+					)}
+				</div>
+			</section>
+
+			{/* 로그인 유도 모달 */}
+			{modalType === "login" && selectedExpert && (
+				<div 
+					className="modal fade show d-block" 
+					style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+					onClick={(e) => e.target === e.currentTarget && closeModal()}
+				>
+					<div className="modal-dialog modal-dialog-centered">
+						<div className="modal-content rounded-4">
+							<div className="modal-body p-5 text-center">
+								<div className="icon-shape icon-80 bg-primary bg-opacity-10 rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
+									<i className="bi bi-person-plus fs-1 text-primary"></i>
+								</div>
+								<h4 className="mb-3">로그인이 필요해요</h4>
+								<p className="text-muted mb-4">
+									<strong>{selectedExpert.name}</strong> 전문가에게 문의하시려면<br/>
+									먼저 로그인해주세요.
+								</p>
+								<div className="d-flex gap-3 justify-content-center">
+									<button 
+										className="btn btn-outline-secondary"
+										onClick={closeModal}
+									>
+										다음에 할게요
+									</button>
+									<Link href="/login" className="btn btn-primary">
+										로그인하기
+									</Link>
+								</div>
+								<div className="mt-3">
+									<small className="text-muted">
+										아직 계정이 없으신가요? <Link href="/register" className="text-primary">회원가입</Link>
+									</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* 상세 모달 */}
+			{modalType === "detail" && selectedExpert && (
+				<div 
+					className="modal fade show d-block" 
+					style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+					onClick={(e) => e.target === e.currentTarget && closeModal()}
+				>
+					<div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+						<div className="modal-content rounded-4">
+							<div className="modal-header border-0 pb-0">
+								<button type="button" className="btn-close" onClick={closeModal}></button>
+							</div>
+							<div className="modal-body p-4 p-lg-5">
+								<div className="d-flex flex-column flex-md-row gap-4 mb-4 pb-4 border-bottom">
+									<img 
+										src={selectedExpert.image} 
+										alt={selectedExpert.name}
+										className="rounded-4"
+										style={{ width: '200px', height: '200px', objectFit: 'cover'}}
+										referrerPolicy="no-referrer"
+										onError={(e) => {
+											const target = e.target as HTMLImageElement
+											target.src = DEFAULT_EXPERT_IMAGE
+										}}
+									/>
+									<div className="flex-grow-1">
+										<p className="text-primary btn-text mb-2">{selectedExpert.title}</p>
+										<h3 className="mb-1">{selectedExpert.name}</h3>
+										<p className="text-muted mb-3">{selectedExpert.company}</p>
+										
+										<div className="d-flex flex-wrap gap-3 mb-3">
+											<div className="d-flex align-items-center">
+												<i className="bi bi-geo-alt text-primary me-2"></i>
+												<span>{selectedExpert.location}</span>
+											</div>
+											<div className="d-flex align-items-center">
+												<i className="bi bi-briefcase text-primary me-2"></i>
+												<span>경력 {selectedExpert.experience}년</span>
+											</div>
+											{selectedExpert.reviews > 0 && (
+												<div className="d-flex align-items-center">
+													<i className="bi bi-star-fill text-warning me-2"></i>
+													<span>{selectedExpert.rating.toFixed(1)} ({selectedExpert.reviews}개 리뷰)</span>
+												</div>
+											)}
+										</div>
+
+										<div className="d-flex flex-wrap gap-2">
+											{selectedExpert.specialties.map((specialty, index) => (
+												<span 
+													key={index}
+													className="badge bg-primary bg-opacity-10 text-primary px-3 py-2"
+												>
+													{specialty}
+												</span>
+											))}
+										</div>
+									</div>
+								</div>
+
+								{/* 소개 */}
+								<div className="mb-4">
+									<h5 className="mb-3">
+										<i className="bi bi-person-badge text-primary me-2"></i>
+										전문가 소개
+									</h5>
+									<p className="text-muted">{selectedExpert.description || "상세 소개가 등록되지 않았습니다."}</p>
+								</div>
+
+								{/* 리뷰 섹션 */}
+								<div>
+									<div className="d-flex justify-content-between align-items-center mb-3">
+										<h5 className="mb-0">
+											<i className="bi bi-chat-quote text-primary me-2"></i>
+											리뷰 ({expertReviews.length})
+										</h5>
+										{!showReviewForm && (
+											<button 
+												className="btn btn-outline-primary btn-sm"
+												onClick={() => setShowReviewForm(true)}
+											>
+												<i className="bi bi-pencil me-1"></i>
+												리뷰 작성
+											</button>
+										)}
+									</div>
+
+									{/* 리뷰 작성 폼 */}
+									{showReviewForm && (
+										<div className="mb-4">
+											<div className="card border rounded-3">
+												<div className="card-body">
+													{reviewSubmitStatus === "success" ? (
+														<div className="text-center py-3">
+															<i className="bi bi-check-circle text-success fs-1 d-block mb-2"></i>
+															<p className="text-success mb-0">리뷰가 등록되었습니다!</p>
+														</div>
+													) : (
+														<form onSubmit={handleReviewSubmit}>
+															<div className="mb-3">
+																<label className="form-label">평점</label>
+																<div>
+																	{renderStars(reviewForm.rating, true, (rating) => 
+																		setReviewForm(prev => ({ ...prev, rating }))
+																	)}
+																</div>
+															</div>
+															<div className="mb-3">
+																<label className="form-label">작성자명 (선택)</label>
+																<input
+																	type="text"
+																	className="form-control"
+																	placeholder={profile?.name || "익명으로 등록됩니다"}
+																	value={reviewForm.authorName}
+																	onChange={(e) => setReviewForm(prev => ({ ...prev, authorName: e.target.value }))}
+																/>
+															</div>
+															<div className="mb-3">
+																<label className="form-label">리뷰 내용 <span className="text-danger">*</span></label>
+																<textarea
+																	className="form-control"
+																	rows={3}
+																	placeholder="상담 경험을 공유해주세요"
+																	value={reviewForm.content}
+																	onChange={(e) => setReviewForm(prev => ({ ...prev, content: e.target.value }))}
+																	required
+																></textarea>
+															</div>
+															<div className="d-flex gap-2">
+																<button 
+																	type="button"
+																	className="btn btn-outline-secondary"
+																	onClick={() => setShowReviewForm(false)}
+																>
+																	취소
+																</button>
+																<button 
+																	type="submit" 
+																	className="btn btn-primary"
+																	disabled={reviewSubmitStatus === "loading"}
+																>
+																	{reviewSubmitStatus === "loading" ? (
+																		<><span className="spinner-border spinner-border-sm me-2"></span>등록 중...</>
+																	) : (
+																		'리뷰 등록'
+																	)}
+																</button>
+															</div>
+														</form>
+													)}
+												</div>
+											</div>
+										</div>
+									)}
+
+									{/* 리뷰 목록 */}
+									{reviewsLoading ? (
+										<div className="text-center py-4">
+											<div className="spinner-border spinner-border-sm text-primary"></div>
+										</div>
+									) : expertReviews.length === 0 ? (
+										<div className="text-center py-4 text-muted">
+											<i className="bi bi-chat-square-text fs-1 d-block mb-2"></i>
+											<p className="mb-0">아직 등록된 리뷰가 없습니다.</p>
+											<small>첫 번째 리뷰를 작성해보세요!</small>
+										</div>
+									) : (
+										<div className="d-flex flex-column gap-3">
+											{expertReviews.map((review) => (
+												<div key={review.reviewId} className="p-3 bg-light rounded-3">
+													<div className="d-flex justify-content-between align-items-start mb-2">
+														<div>
+															<strong>{review.authorName}</strong>
+															<div className="d-flex align-items-center gap-1 mt-1">
+																{renderStars(review.rating)}
+															</div>
+														</div>
+														<small className="text-muted">{review.createdAt.split(' ')[0]}</small>
+													</div>
+													<p className="mb-0 text-muted">{review.content}</p>
+												</div>
+											))}
+										</div>
+									)}
+								</div>
+							</div>
+							<div className="modal-footer border-0">
+								<div className="d-flex justify-content-between align-items-center w-100">
+									<div>
+										<span className="fs-4 fw-bold text-primary">{selectedExpert.price.toLocaleString()}원</span>
+										<span className="text-muted">/시간</span>
+									</div>
+									<button 
+										className="btn btn-primary"
+										onClick={() => {
+											closeModal()
+											setTimeout(() => openInquiryModal(selectedExpert), 100)
+										}}
+									>
+										문의하기
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* 문의 모달 */}
+			{modalType === "inquiry" && selectedExpert && (
+				<div 
+					className="modal fade show d-block" 
+					style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+					onClick={(e) => e.target === e.currentTarget && closeModal()}
+				>
+					<div className="modal-dialog modal-dialog-centered modal-lg">
+						<div className="modal-content rounded-4">
+							<div className="modal-header border-0 pb-0">
+								<button type="button" className="btn-close" onClick={closeModal}></button>
+							</div>
+							<div className="modal-body p-4 p-lg-5">
+								{submitStatus === "success" ? (
+									<div className="text-center py-5">
+										<div className="icon-shape icon-100 bg-success bg-opacity-10 rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
+											<i className="bi bi-check-lg fs-1 text-success"></i>
+										</div>
+										<h4 className="text-success mb-3">문의 접수 완료!</h4>
+										<p className="text-muted">{submitMessage}</p>
+										<p className="text-muted small">
+											문의 내역은 <Link href="/mypage" className="text-primary">마이페이지</Link>에서 확인할 수 있습니다.
+										</p>
+									</div>
+								) : (
+									<>
+										<div className="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
+											<img 
+												src={selectedExpert.image} 
+												alt={selectedExpert.name}
+												className="rounded-circle"
+												style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+												referrerPolicy="no-referrer"
+												onError={(e) => {
+													const target = e.target as HTMLImageElement
+													target.src = DEFAULT_EXPERT_IMAGE
+												}}
+											/>
+											<div>
+												<p className="text-primary btn-text mb-1">{selectedExpert.title}</p>
+												<h4 className="mb-1">{selectedExpert.name}</h4>
+												<p className="text-muted mb-0">{selectedExpert.company}</p>
+											</div>
+										</div>
+
+										{/* 로그인 사용자 안내 */}
+										<div className="alert alert-info mb-4">
+											<i className="bi bi-info-circle me-2"></i>
+											<strong>{profile?.name || '회원'}님</strong>의 정보가 자동으로 입력되었습니다. 필요시 수정해주세요.
+										</div>
+
+										<form onSubmit={handleSubmit}>
+											<div className="row g-3">
+												<div className="col-md-6">
+													<label className="form-label">이름 <span className="text-danger">*</span></label>
+													<input
+														type="text"
+														className="form-control"
+														placeholder="홍길동"
+														value={bookingForm.name}
+														onChange={(e) => handleFormChange("name", e.target.value)}
+														required
+													/>
+												</div>
+												<div className="col-md-6">
+													<label className="form-label">연락처 <span className="text-danger">*</span></label>
+													<input
+														type="tel"
+														className="form-control"
+														placeholder="010-1234-5678"
+														value={bookingForm.phone}
+														onChange={(e) => handleFormChange("phone", e.target.value)}
+														required
+													/>
+												</div>
+												<div className="col-md-6">
+													<label className="form-label">이메일 <span className="text-danger">*</span></label>
+													<input
+														type="email"
+														className="form-control"
+														placeholder="example@email.com"
+														value={bookingForm.email}
+														onChange={(e) => handleFormChange("email", e.target.value)}
+														required
+													/>
+												</div>
+												<div className="col-md-6">
+													<label className="form-label">회사명</label>
+													<input
+														type="text"
+														className="form-control"
+														placeholder="(주)회사명"
+														value={bookingForm.company}
+														onChange={(e) => handleFormChange("company", e.target.value)}
+													/>
+												</div>
+												<div className="col-md-6">
+													<label className="form-label">직책</label>
+													<input
+														type="text"
+														className="form-control"
+														placeholder="대표이사"
+														value={bookingForm.position}
+														onChange={(e) => handleFormChange("position", e.target.value)}
+													/>
+												</div>
+												<div className="col-md-6">
+													<label className="form-label">희망 상담 일시</label>
+													<input
+														type="datetime-local"
+														className="form-control"
+														value={bookingForm.consultDate}
+														onChange={(e) => handleFormChange("consultDate", e.target.value)}
+													/>
+												</div>
+												<div className="col-12">
+													<label className="form-label">상담 주제 <span className="text-danger">*</span></label>
+													<input
+														type="text"
+														className="form-control"
+														placeholder="상담받고 싶은 주제를 입력하세요"
+														value={bookingForm.topic}
+														onChange={(e) => handleFormChange("topic", e.target.value)}
+														required
+													/>
+												</div>
+												<div className="col-12">
+													<label className="form-label">상세 내용</label>
+													<textarea
+														className="form-control"
+														rows={4}
+														placeholder="현재 상황과 궁금한 점을 자세히 적어주세요"
+														value={bookingForm.details}
+														onChange={(e) => handleFormChange("details", e.target.value)}
+													></textarea>
+												</div>
+											</div>
+
+											{submitStatus === "error" && (
+												<div className="alert alert-danger mt-3 mb-0">
+													<i className="bi bi-exclamation-circle me-2"></i>
+													{submitMessage}
+												</div>
+											)}
+
+											<div className="d-flex justify-content-between align-items-center mt-4 pt-4 border-top">
+												<div>
+													<span className="fs-4 fw-bold text-primary">{selectedExpert.price.toLocaleString()}원</span>
+													<span className="text-muted">/시간</span>
+												</div>
+												<div className="d-flex gap-2">
+													<button type="button" className="btn btn-outline-secondary" onClick={closeModal}>
+														취소
+													</button>
+													<button type="submit" className="btn btn-primary" disabled={submitStatus === "loading"}>
+														{submitStatus === "loading" ? (
+															<><span className="spinner-border spinner-border-sm me-2"></span>접수 중...</>
+														) : (
+															"문의 접수"
+														)}
+													</button>
+												</div>
+											</div>
+										</form>
+									</>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+		</Layout>
+	)
 }
