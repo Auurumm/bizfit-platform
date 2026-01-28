@@ -52,9 +52,9 @@ export default function Section8() {
 													</g>
 												</svg>
 											</div>
-											<Link href="mailto:support@bizfit.kr">
+											<Link href="mailto:official.haedeun@gmail.com">
 												<h6 className="mt-5 mb-3 fs-20 text-white">
-													support@bizfit.kr
+													official.haedeun@gmail.com
 												</h6>
 											</Link>
 											<p className="mb-0">

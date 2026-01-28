@@ -118,7 +118,7 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 					<div className="tgmobile__menu-bottom mt-auto">
 						<div className="contact-info">
 							<ul className="list-wrap">
-								<li><span className="opacity-50">이메일:</span> <Link href="mailto:support@bizfit.kr">support@bizfit.kr</Link></li>
+								<li><span className="opacity-50">이메일:</span> <Link href="mailto:official.haedeun@gmail.com">official.haedeun@gmail.com</Link></li>
 								<li><span className="opacity-50">전화:</span> <Link href="tel:1588-0000">1588-0000</Link></li>
 							</ul>
 						</div>

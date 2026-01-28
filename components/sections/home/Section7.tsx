@@ -1,7 +1,58 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Navigation, Pagination } from "swiper/modules"
 import Link from "next/link"
+
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjCdv9Cg3ooAz5E-DE27oOkVhPUCmA_mChScMc5zL_cY81M7EpiK082RSfCVbpn8Xm/exec"
+
+const DEFAULT_IMAGE = "/assets/imgs/default-expert.png"
+
+interface Expert {
+	id: string
+	name: string
+	title: string
+	company: string
+	specialties: string[]
+	image: string
+	category: string
+}
+
+// Google Drive URL 변환
+const convertGoogleDriveUrl = (url: string): string => {
+	if (!url) return DEFAULT_IMAGE
+	if (url.includes('lh3.googleusercontent.com')) return url
+	if (url.startsWith('http') && !url.includes('drive.google.com')) return url
+	if (url.startsWith('/') || url.startsWith('assets/')) return url
+	
+	const patterns = [
+		/\/d\/([a-zA-Z0-9_-]+)/,
+		/id=([a-zA-Z0-9_-]+)/,
+		/\/file\/d\/([a-zA-Z0-9_-]+)/
+	]
+	
+	for (const pattern of patterns) {
+		const match = url.match(pattern)
+		if (match) {
+			return `https://lh3.googleusercontent.com/d/${match[1]}`
+		}
+	}
+	
+	return DEFAULT_IMAGE
+}
+
+// 카테고리 한글 변환
+const getCategoryName = (category: string): string => {
+	const names: Record<string, string> = {
+		'startup': '창업 분야',
+		'finance': '재무/회계 분야',
+		'marketing': '마케팅 분야',
+		'tech': 'R&D 분야',
+		'legal': '법무 분야',
+		'hr': '인사/조직 분야',
+	}
+	return names[category] || category
+}
 
 const swiperOptions = {
 	modules: [Autoplay, Pagination, Navigation],
@@ -13,29 +64,54 @@ const swiperOptions = {
 	},
 	loop: true,
 	breakpoints: {
-		320: {
-			slidesPerView: 1,
-			spaceBetween: 30,
-		},
-		575: {
-			slidesPerView: 2,
-			spaceBetween: 30,
-		},
-		767: {
-			slidesPerView: 2,
-			spaceBetween: 30,
-		},
-		991: {
-			slidesPerView: 4,
-			spaceBetween: 30,
-		},
+		320: { slidesPerView: 1, spaceBetween: 30 },
+		575: { slidesPerView: 2, spaceBetween: 30 },
+		767: { slidesPerView: 2, spaceBetween: 30 },
+		991: { slidesPerView: 4, spaceBetween: 30 },
 	}
 }
 
 export default function Section7() {
+	const [experts, setExperts] = useState<Expert[]>([])
+	const [loading, setLoading] = useState(true)
+
+	useEffect(() => {
+		const fetchExperts = async () => {
+			try {
+				const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=experts`)
+				const result = await response.json()
+				
+				if (result.success && result.data?.length > 0) {
+					// 전체 전문가를 랜덤으로 섞기
+					const shuffled = [...result.data].sort(() => Math.random() - 0.5)
+					
+					// 이미지 URL 변환
+					const expertsWithImages = shuffled.map((expert: Expert) => ({
+						...expert,
+						image: expert.image 
+							? convertGoogleDriveUrl(expert.image)
+							: DEFAULT_IMAGE
+					}))
+					
+					setExperts(expertsWithImages)
+				}
+			} catch (error) {
+				console.error('전문가 로드 오류:', error)
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		fetchExperts()
+	}, [])
+
+	// 로딩 중이거나 전문가가 없으면 섹션 숨김
+	if (loading || experts.length === 0) {
+		return null
+	}
+
 	return (
 		<>
-			{/*bizfit 전문가 소개*/}
 			<section className="law-firm-home-section-7 position-relative overflow-hidden pt-120 pb-120 bg-secondary-2">
 				<div className="container">
 					<div className="text-center">
@@ -53,136 +129,43 @@ export default function Section7() {
 						<div className="col-12 position-relative">
 							<Swiper {...swiperOptions} className="swiper slider-4 ps-3">
 								<div className="swiper-wrapper z-1">
-									<SwiperSlide>
-										<div className="card-team overflow-hidden">
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-1.png"
-													alt="R&D 전문가"
-												/>
-												<div className="team-overlay">
-													<div className="position-absolute top-50 start-50 translate-middle">
-														<Link href="/experts" className="btn btn-primary btn-sm">
-															상담 문의
-														</Link>
+									{experts.map((expert) => (
+										<SwiperSlide key={expert.id}>
+											<div className="card-team overflow-hidden">
+												<div className="position-relative d-inline-flex">
+													<img
+														src={expert.image}
+														alt={expert.name}
+														style={{ width: '100%', height: '300px', objectFit: 'cover' }}
+														referrerPolicy="no-referrer"
+														onError={(e) => {
+															const target = e.target as HTMLImageElement
+															target.src = DEFAULT_IMAGE
+														}}
+													/>
+													<div className="team-overlay">
+														<div className="position-absolute top-50 start-50 translate-middle">
+															<Link href="/experts" className="btn btn-primary btn-sm"
+															  style={{ whiteSpace: 'nowrap' }}>
+																상담 문의
+															</Link>
+														</div>
 													</div>
 												</div>
+												<p className="btn-text text-primary mt-5">
+													{getCategoryName(expert.category)}
+												</p>
+												<Link href="/experts">
+													<h5>
+														{expert.name} <strong>{expert.title}</strong>
+													</h5>
+												</Link>
+												<p className="text-muted small">
+													{expert.specialties?.slice(0, 2).join(', ') || expert.company}
+												</p>
 											</div>
-											<p className="btn-text text-primary mt-5">R&D 분야</p>
-											<Link href="/experts">
-												<h5>
-													김기술 <strong>전문위원</strong>
-												</h5>
-											</Link>
-											<p className="text-muted small">
-												기술개발, 연구개발 지원사업 전문
-											</p>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div className="card-team overflow-hidden">
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-2.png"
-													alt="창업 전문가"
-												/>
-												<div className="team-overlay">
-													<div className="position-absolute top-50 start-50 translate-middle">
-														<Link href="/experts" className="btn btn-primary btn-sm">
-															상담 문의
-														</Link>
-													</div>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">창업 분야</p>
-											<Link href="/experts">
-												<h5>
-													박창업 <strong>컨설턴트</strong>
-												</h5>
-											</Link>
-											<p className="text-muted small">
-												예비창업, 초기창업 지원사업 전문
-											</p>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div className="card-team overflow-hidden">
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-3.png"
-													alt="수출 전문가"
-												/>
-												<div className="team-overlay">
-													<div className="position-absolute top-50 start-50 translate-middle">
-														<Link href="/experts" className="btn btn-primary btn-sm">
-															상담 문의
-														</Link>
-													</div>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">수출 분야</p>
-											<Link href="/experts">
-												<h5>
-													이글로벌 <strong>매니저</strong>
-												</h5>
-											</Link>
-											<p className="text-muted small">
-												해외진출, 수출바우처 지원사업 전문
-											</p>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div className="card-team overflow-hidden">
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-4.png"
-													alt="자금 전문가"
-												/>
-												<div className="team-overlay">
-													<div className="position-absolute top-50 start-50 translate-middle">
-														<Link href="/experts" className="btn btn-primary btn-sm">
-															상담 문의
-														</Link>
-													</div>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">자금 분야</p>
-											<Link href="/experts">
-												<h5>
-													최자금 <strong>팀장</strong>
-												</h5>
-											</Link>
-											<p className="text-muted small">
-												정책자금, 투자유치 지원사업 전문
-											</p>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div className="card-team overflow-hidden">
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-2.png"
-													alt="고용 전문가"
-												/>
-												<div className="team-overlay">
-													<div className="position-absolute top-50 start-50 translate-middle">
-														<Link href="/experts" className="btn btn-primary btn-sm">
-															상담 문의
-														</Link>
-													</div>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">고용 분야</p>
-											<Link href="/experts">
-												<h5>
-													정인사 <strong>전문위원</strong>
-												</h5>
-											</Link>
-											<p className="text-muted small">
-												채용지원, 고용유지 지원사업 전문
-											</p>
-										</div>
-									</SwiperSlide>
+										</SwiperSlide>
+									))}
 								</div>
 							</Swiper>
 						</div>

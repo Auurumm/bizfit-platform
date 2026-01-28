@@ -12,31 +12,10 @@ import "/public/assets/fonts/fontawesome/solid.min.css"
 import "/public/assets/fonts/fontawesome/regular.min.css"
 import "/public/assets/css/main.css"
 import "/public/assets/css/style.css"
+import "./globals.css"  // 👈 이 줄 추가
 
 import type { Metadata } from "next"
-import { Playfair_Display, Roboto } from "next/font/google"
 import { AuthProvider } from '@/lib/AuthContext'
-
-const playfairItalic = Playfair_Display({
-	weight: '500',
-	subsets: ['latin'],
-	variable: '--tc-heading-font-italic',
-	display: 'swap',
-});
-
-const robotoHeading = Roboto({
-	weight: ['500'],
-	subsets: ['latin'],
-	variable: '--tc-heading-font-family',
-	display: 'swap',
-})
-
-const roboto = Roboto({
-	weight: ['300', '400', '500', '700'],
-	subsets: ['latin'],
-	variable: "--tc-body-font-family",
-	display: 'swap',
-})
 
 export const metadata: Metadata = {
 	title: "비즈핏 - AI 기반 정부 지원사업 매칭 플랫폼",
@@ -50,7 +29,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="ko">
-			<body className={`${playfairItalic.variable} ${roboto.variable} ${robotoHeading.variable} law-firm`}>
+			<body className="law-firm">
 				<AuthProvider>
 					{children}
 				</AuthProvider>

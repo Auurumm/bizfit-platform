@@ -9,19 +9,22 @@ export default function Section4() {
 					<div className="row align-items-center">
 						<div className="col-lg-6 order-2 order-lg-1">
 							<div className="position-relative d-inline-block mt-lg-0 mt-5">
-								<div className="position-relative z-0">
-									<img
-										className="wow img-custom-anim-left"
-										src="assets/imgs/pages/law-firm/page-home/home-section-4/img-1.png"
-										alt="BizFit"
-									/>
+							<div className="position-relative z-0">
+								<img
+									src="assets/imgs/pages/law-firm/page-home/home-section-4/img-1.png"
+									alt="BizFit"
+									data-aos="fade-up"
+								/>
 								</div>
 								<div className="d-none d-md-block">
-									<img
-										className="position-absolute top-100 start-100 z-2 translate-middle z-1 border border-4 border-white shadow"
-										src="assets/imgs/pages/law-firm/page-home/home-section-4/img-2.png"
-										alt="BizFit"
-									/>
+								<img
+									className="position-absolute z-2 border border-4 border-white shadow"
+									src="assets/imgs/pages/law-firm/page-home/home-section-4/img-2.png"
+									alt="BizFit"
+									style={{ bottom: '-30px', right: '-30px', maxWidth: '350px' }}
+									data-aos="fade-up"
+									data-aos-delay="200"
+								/>
 								</div>
 							</div>
 						</div>
@@ -46,7 +49,7 @@ export default function Section4() {
 											<h6 className="text-dark fs-20 mb-0">
 												비즈핏은 어떤 서비스인가요?
 											</h6>
-											<span className="ms-auto arrow" />
+											<i className="bi bi-chevron-down ms-auto"></i>
 										</Link>
 									</div>
 									<div
@@ -71,7 +74,7 @@ export default function Section4() {
 											<h6 className="text-dark fs-20 mb-0">
 												AI 진단은 얼마나 걸리나요?
 											</h6>
-											<span className="ms-auto arrow" />
+											<i className="bi bi-chevron-down ms-auto"></i>
 										</Link>
 									</div>
 									<div
@@ -95,7 +98,7 @@ export default function Section4() {
 											<h6 className="text-dark fs-20 mb-0">
 												전문가 상담은 어떻게 받나요?
 											</h6>
-											<span className="ms-auto arrow" />
+											<i className="bi bi-chevron-down ms-auto"></i>
 										</Link>
 									</div>
 									<div
@@ -120,7 +123,7 @@ export default function Section4() {
 											<h6 className="text-dark fs-20 mb-0">
 												서비스 이용 비용이 있나요?
 											</h6>
-											<span className="ms-auto arrow" />
+											<i className="bi bi-chevron-down ms-auto"></i>
 										</Link>
 									</div>
 									<div

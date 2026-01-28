@@ -57,14 +57,6 @@ export default function Section2() {
 									</strong>
 									<span className="text-primary"> 플랫폼</span>입니다.
 								</h2>
-								<div className="position-absolute top-0 end-0 translate-middle-y d-none d-lg-block">
-									<img
-										data-aos="zoom-in"
-										data-aos-delay={800}
-										src="assets/imgs/pages/law-firm/page-home/home-section-2/img-1.png"
-										alt="BizFit"
-									/>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -113,9 +105,6 @@ export default function Section2() {
 												/>
 											</svg>
 										</span>
-									</Link>
-									<Link href="mailto:support@bizfit.kr" className="btn">
-										<span className="text-dark">support@bizfit.kr</span>
 									</Link>
 								</div>
 							</div>

@@ -59,9 +59,9 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
 										)}
 									</>
 								)}
-								<a href="mailto:support@bizfit.kr" className="fs-7 d-flex align-items-center px-3 d-none d-md-flex">
+								<a href="mailto:official.haedeun@gmail.com" className="fs-7 d-flex align-items-center px-3 d-none d-md-flex">
 									<i className="ri-mail-open-line text-white"></i>
-									<span className="text-white">support@bizfit.kr</span>
+									<span className="text-white">official.haedeun@gmail.com</span>
 								</a>
 							</div>
 						</div>
@@ -70,20 +70,12 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
 					<nav className={`navbar navbar-expand-lg navbar-transparent border-bottom border-top border-white border-opacity-10 p-0 shadow-none ${scroll ? 'navbar-stick top-0 position-fixed' : ''}`}>
 						<div className="container mt-3 mb-3">
 							<Link className="navbar-brand" href="/">
-								{/* 비즈핏 로고 - AI 아이콘 */}
-								<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-									<path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z"/>
-									<path d="M16 8V5c0-1.1.9-2 2-2"/>
-									<path d="M12 13h4"/>
-									<path d="M12 18h6a2 2 0 0 1 2 2v1"/>
-									<path d="M12 8h8"/>
-									<path d="M20.5 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/>
-									<path d="M16.5 13a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/>
-									<path d="M20.5 21a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/>
-									<path d="M18.5 3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/>
-								</svg>
-								<h5 className="mb-0 text-white">비즈핏</h5>
-							</Link>
+								<img 
+									src="/assets/imgs/logo.png" 
+									alt="비즈핏" 
+									style={{ height: '100px', width: 'auto' }}
+								/>
+								</Link>
 							<div className="d-none d-lg-flex">
 								<ul className="navbar-nav mx-auto gap-4 align-items-lg-center">
 									<li className="nav-item">

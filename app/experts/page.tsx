@@ -65,6 +65,43 @@ const categories = [
 // 기본 이미지 (단일 이미지로 통일)
 const DEFAULT_EXPERT_IMAGE = "/assets/imgs/default-expert.png"
 
+// Google Drive URL을 직접 이미지 URL로 변환
+const convertGoogleDriveUrl = (url: string): string => {
+	if (!url) return DEFAULT_EXPERT_IMAGE
+	
+	// 이미 변환된 URL이면 그대로 반환
+	if (url.includes('lh3.googleusercontent.com')) {
+		return url
+	}
+	
+	// 일반 이미지 URL이면 그대로 반환
+	if (url.startsWith('http') && !url.includes('drive.google.com')) {
+		return url
+	}
+	
+	// 로컬 이미지면 그대로 반환
+	if (url.startsWith('/')) {
+		return url
+	}
+	
+	// Google Drive URL 패턴: /d/이미지ID/ 또는 id=이미지ID
+	const patterns = [
+		/\/d\/([a-zA-Z0-9_-]+)/,           // /d/ID/view 형식
+		/id=([a-zA-Z0-9_-]+)/,              // ?id=ID 형식
+		/\/file\/d\/([a-zA-Z0-9_-]+)/       // /file/d/ID 형식
+	]
+	
+	for (const pattern of patterns) {
+		const match = url.match(pattern)
+		if (match) {
+			return `https://lh3.googleusercontent.com/d/${match[1]}`
+		}
+	}
+	
+	// 변환 불가능하면 기본 이미지 반환
+	return DEFAULT_EXPERT_IMAGE
+}
+
 export default function ExpertsPage() {
 	const { user, profile, loading: authLoading } = useAuth()
 	
@@ -106,25 +143,25 @@ export default function ExpertsPage() {
 
 	// 전문가 목록 로드
 	const loadExperts = useCallback(async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=experts`)
-      const result = await response.json()
-      
-      if (result.success) {
-        // 이미지가 없으면 단일 기본 이미지 적용
-        const expertsWithImages = result.data.map((expert: Expert) => ({
-          ...expert,
-          image: expert.image || DEFAULT_EXPERT_IMAGE
-        }))
-        
-        // 랜덤 셔플
-        const shuffled = [...expertsWithImages].sort(() => Math.random() - 0.5)
-        
-        setExperts(shuffled)
-        setFilteredExperts(shuffled)
+		try {
+			setLoading(true)
+			setError(null)
+			
+			const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=experts`)
+			const result = await response.json()
+			
+			if (result.success) {
+				// 이미지 URL 변환 적용
+				const expertsWithImages = result.data.map((expert: Expert) => ({
+					...expert,
+					image: convertGoogleDriveUrl(expert.image)
+				}))
+				
+				// 랜덤 셔플
+				const shuffled = [...expertsWithImages].sort(() => Math.random() - 0.5)
+				
+				setExperts(shuffled)
+				setFilteredExperts(shuffled)
 			} else {
 				setError(result.message || "전문가 목록을 불러오는데 실패했습니다.")
 			}
@@ -188,30 +225,21 @@ export default function ExpertsPage() {
 
 	// 문의 모달 열기 (로그인 체크)
 	const openInquiryModal = (expert: Expert) => {
-		console.log("openInquiryModal called") // 디버깅용
-		console.log("authLoading:", authLoading, "user:", user) // 디버깅용
-		
-		// 아직 인증 상태 확인 중이면 잠시 대기
 		if (authLoading) {
-			console.log("Auth still loading, please wait...")
 			return
 		}
 		
-		// 로그인 체크
 		if (!user) {
-			console.log("User not logged in, showing login modal") // 디버깅용
 			setSelectedExpert(expert)
 			setModalType("login")
 			document.body.style.overflow = 'hidden'
 			return
 		}
 
-		console.log("User logged in, showing inquiry modal") // 디버깅용
 		setSelectedExpert(expert)
 		setModalType("inquiry")
 		setSubmitStatus("idle")
 		
-		// 로그인한 사용자 정보 자동 입력
 		setBookingForm({
 			name: profile?.name || "",
 			phone: profile?.phone || "",
@@ -259,7 +287,7 @@ export default function ExpertsPage() {
 					expertName: selectedExpert?.name || "",
 					expertTitle: selectedExpert?.title || "",
 					inquiryType: "consultation",
-					userId: user?.id || ""  // 회원 ID 추가
+					userId: user?.id || ""
 				}),
 			})
 
@@ -303,12 +331,11 @@ export default function ExpertsPage() {
 			setReviewSubmitStatus("success")
 			setReviewForm({ authorName: "", rating: 5, content: "" })
 			
-			// 리뷰 목록 새로고침
 			setTimeout(() => {
 				if (selectedExpert) {
 					loadReviews(selectedExpert.id)
 				}
-				loadExperts() // 전문가 목록도 새로고침 (평점 업데이트)
+				loadExperts()
 				setShowReviewForm(false)
 				setReviewSubmitStatus("idle")
 			}, 1500)
