@@ -15,28 +15,13 @@ export default function Section1() {
 							<span className="content-top btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2">
 								#01 정부지원사업 매칭 플랫폼
 							</span>
-							<h1 className="text-white ds-1 mt-4 text-anime-style-222">
+							{/* 행간 정리 */}
+							<h1 className="text-white ds-1 mt-4" style={{ lineHeight: '1.3' }}>
 								정부 지원사업
 								<br />
-								한눈에 찾고
-								<strong className="position-relative text-anime-style-3 ms-3">
-									AI로 추천
-									<span className="position-absolute top-50 start-50 translate-middle d-none d-md-block">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width={274}
-											height={73}
-											viewBox="0 0 274 73"
-											fill="none"
-										>
-											<path
-												d="M1 41.8062C48.1986 17.6383 163.699 -21.1402 248.109 17.089C353.623 64.8755 91.7525 75.8609 56.2169 70.9174C28.4292 67.0518 -0.640106 29.1729 41.4559 6.10354"
-												stroke="#B98E44"
-												strokeWidth={2}
-											/>
-										</svg>
-									</span>
-								</strong>
+								한눈에 찾고,
+								<br />
+								<strong className="text-primary">AI로 추천</strong>
 							</h1>
 							<p className="text-white fs-5 mt-4 opacity-75">
 								실시간 정부 지원사업 정보와 AI 기반 맞춤 추천으로
@@ -95,15 +80,12 @@ export default function Section1() {
 									<img
 										src="assets/imgs/pages/law-firm/page-home/home-section-1/portrait.png"
 										alt="BizFit"
-										style={{ width: '800px', height: '500px' }}
+										style={{ width: '800px', height: '600px' }}
 									/>
 								</div>
+								{/* bg-circle 유지, 빈 div 정리 */}
 								<div className="position-absolute bottom-0 start-0">
 									<div className="bg-circle" data-aos="zoom-in" />
-									<div className="position-absolute top-0 end-0 m-6">
-										<div className="position-relative z-1">
-										</div>
-									</div>
 								</div>
 							</div>
 						</div>

@@ -3,20 +3,18 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
+import PageHeader from "@/components/sections/PageHeader"
 import { useAuth } from "@/lib/AuthContext"
 import { supabase } from "@/lib/supabase"
 import {
   Search,
   Building,
   Calendar,
-  Tag,
   CheckCircle,
   XCircle,
   AlertCircle,
   Clock,
   Filter,
-  ChevronLeft,
-  ChevronRight,
   Inbox,
   RefreshCw,
   ExternalLink,
@@ -54,12 +52,6 @@ interface ProgramsResponse {
   totalAvailable: number
   dataSource: string
   lastUpdated: string
-}
-
-interface BookmarkItem {
-  id: string
-  program_id: string
-  program_name: string
 }
 
 // ============================================
@@ -150,7 +142,6 @@ export default function ProgramsPage() {
       const isBookmarked = bookmarks.has(program.id)
 
       if (isBookmarked) {
-        // 북마크 제거
         const { error } = await supabase
           .from('bookmarks')
           .delete()
@@ -165,7 +156,6 @@ export default function ProgramsPage() {
           return newSet
         })
       } else {
-        // 북마크 추가
         const { error } = await supabase
           .from('bookmarks')
           .insert({
@@ -193,7 +183,6 @@ export default function ProgramsPage() {
       setLoading(true)
       setError(null)
 
-      // 쿼리 파라미터 구성
       const params = new URLSearchParams()
       if (categoryFilter) params.append("category", categoryFilter)
       if (statusFilter) params.append("status", statusFilter)
@@ -224,17 +213,14 @@ export default function ProgramsPage() {
     }
   }, [categoryFilter, statusFilter, searchQuery, showClosed])
 
-  // 초기 로드
   useEffect(() => {
     fetchPrograms()
   }, [fetchPrograms])
 
-  // 북마크 로드
   useEffect(() => {
     loadBookmarks()
   }, [loadBookmarks])
 
-  // 페이지 리셋 (필터 변경 시)
   useEffect(() => {
     setCurrentPage(1)
   }, [categoryFilter, statusFilter, searchQuery, showClosed])
@@ -314,8 +300,9 @@ export default function ProgramsPage() {
   // ============================================
   if (loading && programs.length === 0) {
     return (
-      <Layout breadcrumbTitle="지원사업 목록">
-        <section className="section-programs-list position-relative overflow-hidden py-120">
+      <Layout>
+        <PageHeader title="지원사업" />
+        <section className="py-120">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-6">
@@ -339,8 +326,9 @@ export default function ProgramsPage() {
   // ============================================
   if (error) {
     return (
-      <Layout breadcrumbTitle="지원사업 목록">
-        <section className="section-programs-list position-relative overflow-hidden py-120">
+      <Layout>
+        <PageHeader title="지원사업" />
+        <section className="py-120">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-6">
@@ -371,60 +359,44 @@ export default function ProgramsPage() {
   // 렌더링 - 메인 콘텐츠
   // ============================================
   return (
-    <Layout breadcrumbTitle="지원사업 목록">
-      {/* 히어로 섹션 */}
-      <section className="section-programs-hero position-relative overflow-hidden pt-80 pb-80 bg-primary">
-        <div className="container position-relative z-1">
-          <div className="row align-items-center">
-            <div className="col-lg-8" data-aos="fade-right">
-              <h1 className="ds-2 text-white mb-3">
-                <strong>정부 지원사업</strong> 목록
-              </h1>
-              <p className="fs-5 text-white opacity-75 mb-4">
-                전체 <strong className="text-warning">{totalAvailable}개</strong> 중{" "}
-                <strong className="text-warning">{programs.length}개</strong> 표시
+    <Layout>
+      <PageHeader title="지원사업" />
+      
+      {/* 메인 콘텐츠 */}
+      <section className="py-120">
+        <div className="container">
+          {/* 상단 정보 */}
+          <div className="d-flex flex-wrap justify-content-between align-items-center mb-5" data-aos="fade-up">
+            <div>
+              <p className="text-muted mb-0">
+                전체 <strong className="text-primary">{totalAvailable}개</strong> 중{" "}
+                <strong className="text-primary">{programs.length}개</strong> 표시
                 {statusFilter === "closing" && " (마감 임박 순)"}
               </p>
-              <div className="d-flex flex-wrap gap-3">
-                <span className="badge bg-white text-primary px-3 py-2">
-                  <CheckCircle size={16} className="me-1" />
-                  마감 임박순 정렬
-                </span>
-                <span className="badge bg-white text-primary px-3 py-2">
-                  <Filter size={16} className="me-1" />
-                  맞춤 필터링
-                </span>
-                {user && (
-                  <span className="badge bg-white text-primary px-3 py-2">
-                    <Bookmark size={16} className="me-1" />
-                    북마크 {bookmarks.size}개
-                  </span>
-                )}
-                <button 
-                  className="badge bg-white bg-opacity-25 text-white px-3 py-2 border-0"
-                  onClick={() => fetchPrograms(true)}
-                  disabled={loading}
-                >
-                  <RefreshCw size={16} className={`me-1 ${loading ? 'spinner-border spinner-border-sm' : ''}`} />
-                  새로고침
-                </button>
-              </div>
             </div>
-            <div className="col-lg-4 text-lg-end mt-4 mt-lg-0" data-aos="fade-left">
-              <Link href="/diagnosis" className="btn btn-light btn-lg px-5 py-3 hover-up">
-                <span className="me-2">AI 진단받기</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M15.8167 7.55759C15.8165 7.5574 15.8163 7.55719 15.8161 7.557L12.5504 4.307C12.3057 4.06353 11.91 4.06444 11.6665 4.30912C11.423 4.55378 11.4239 4.9495 11.6686 5.193L13.8612 7.375H0.625C0.279813 7.375 0 7.65481 0 8C0 8.34519 0.279813 8.625 0.625 8.625H13.8612L11.6686 10.807C11.4239 11.0505 11.423 11.4462 11.6665 11.6909C11.91 11.9356 12.3058 11.9364 12.5504 11.693L15.8162 8.443C15.8163 8.44281 15.8165 8.44259 15.8167 8.4424C16.0615 8.19809 16.0607 7.80109 15.8167 7.55759Z" fill="currentColor"/>
-                </svg>
-              </Link>
+            <div className="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+              <span className="badge bg-light text-dark px-3 py-2">
+                <CheckCircle size={14} className="me-1" />
+                마감 임박순 정렬
+              </span>
+              {user && (
+                <span className="badge bg-light text-dark px-3 py-2">
+                  <Bookmark size={14} className="me-1" />
+                  북마크 {bookmarks.size}개
+                </span>
+              )}
+              <button 
+                className="badge bg-primary text-white px-3 py-2 border-0"
+                onClick={() => fetchPrograms(true)}
+                disabled={loading}
+                style={{ cursor: 'pointer' }}
+              >
+                <RefreshCw size={14} className={`me-1 ${loading ? 'spinner-border spinner-border-sm' : ''}`} />
+                새로고침
+              </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 메인 콘텐츠 */}
-      <section className="section-programs-list position-relative overflow-hidden py-80">
-        <div className="container position-relative z-1">
           {/* 필터 섹션 */}
           <div className="card border-0 shadow-sm mb-5" data-aos="fade-up">
             <div className="card-body p-lg-4 p-3">
@@ -544,7 +516,7 @@ export default function ProgramsPage() {
                       <div className="card-body p-4 d-flex flex-column">
                         {/* 상단: 카테고리 & 상태 & 북마크 */}
                         <div className="d-flex justify-content-between align-items-start mb-3">
-                          <div className="d-flex align-items-center gap-2">
+                          <div className="d-flex align-items-center gap-2 flex-wrap">
                             <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-7">
                               {program.category}
                             </span>
@@ -662,7 +634,6 @@ export default function ProgramsPage() {
               {totalPages > 1 && (
                 <nav className="mt-5" data-aos="fade-up">
                   <ul className="pagination justify-content-center align-items-center gap-1 flex-nowrap mb-0">
-                    {/* 처음 */}
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button
                         className="page-link border rounded-2 px-3"
@@ -673,7 +644,6 @@ export default function ProgramsPage() {
                       </button>
                     </li>
 
-                    {/* 페이지 번호들 (최대 10개) */}
                     {Array.from({ length: Math.min(10, totalPages) }, (_, i) => {
                       let page: number
                       if (totalPages <= 10) {
@@ -699,7 +669,6 @@ export default function ProgramsPage() {
                       </li>
                     ))}
 
-                    {/* 다음 */}
                     <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                       <button
                         className="page-link border rounded-2 px-3"
@@ -710,7 +679,6 @@ export default function ProgramsPage() {
                       </button>
                     </li>
 
-                    {/* 마지막 */}
                     <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                       <button
                         className="page-link border rounded-2 px-3"

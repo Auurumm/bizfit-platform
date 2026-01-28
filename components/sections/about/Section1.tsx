@@ -3,7 +3,7 @@ import Link from "next/link"
 export default function Section1() {
     return (
         <>
-            {/*law-firm about section 1*/}
+            {/*bizfit about section 1*/}
             <section className="law-firm-about-section-1 position-relative pt-150 overflow-hidden">
                 <div className="container position-relative z-1 pb-250">
                     <div className="row align-items-center">
@@ -11,9 +11,9 @@ export default function Section1() {
                             <div className="position-relative d-inline-block mt-lg-0 mt-5">
                                 <div className="position-relative z-0">
                                     <img
-                                        className=" wow img-custom-anim-left"
+                                        className="wow img-custom-anim-left"
                                         src="assets/imgs/pages/law-firm/page-home/home-section-4/img-1.png"
-                                        alt="AstraX"
+                                        alt="비즈핏"
                                     />
                                 </div>
                                 <div
@@ -24,36 +24,37 @@ export default function Section1() {
                                     <img
                                         className="position-absolute top-100 start-100 z-2 translate-middle z-1 border border-4 border-white shadow"
                                         src="assets/imgs/pages/law-firm/page-home/home-section-4/img-2.png"
-                                        alt="AstraX"
+                                        alt="비즈핏"
                                     />
                                 </div>
                             </div>
                         </div>
                         <div className="col-lg-6 order-1 order-lg-2">
                             <span className="content-top btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2 bg-white">
-                                our history
+                                비즈핏 소개
                             </span>
                             <h2
-                                className="mt-3 mb-4 text-anime-style-2"
+                                className="mt-3 mb-4"
                                 data-aos="fade-right"
                                 data-aos-delay={500}
                             >
-                                We serve quality solution for all peoples
+                                중소기업의 성장을 위한
+                                <br />
+                                <strong>맞춤형 지원사업 매칭</strong>
                             </h2>
                             <p>
-                                We offer a wide range of digital marketing services that cater to
-                                business of all sizes. A forward-thinking and clever approach. In
-                                our early years, we faced challenges that shaped our approach.
+                                비즈핏은 AI 기술을 활용하여 중소기업과 스타트업에 최적화된 
+                                정부 지원사업을 자동으로 매칭해주는 플랫폼입니다. 
+                                복잡한 지원사업 정보를 한눈에 파악하고, 
+                                기업 맞춤형 추천을 받아보세요.
                             </p>
-                            <p className="mb-6 ">
-                                At [Your Law Firm Name], we are dedicated to delivering exceptional
-                                legal services tailored to meet the unique needs of each client. Our
-                                experienced team specializes in a wide range of legal areas,
-                                including corporate and business law, where we assist with business
-                                formation
+                            <p className="mb-6">
+                                기업마당 공공데이터와 실시간 연동하여 항상 최신 정보를 제공하며,
+                                분야별 전문가 네트워크를 통해 지원사업 신청부터 
+                                사업계획서 작성까지 원스톱으로 지원합니다.
                             </p>
                             <Link href="/contact" className="btn btn-outline-secondary hover-up">
-                                <span>get in touch</span>
+                                <span>문의하기</span>
                                 <svg
                                     className="fill-primary"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -70,14 +71,10 @@ export default function Section1() {
                                     </g>
                                 </svg>
                             </Link>
-                            <Link href="#" className="btn">
-                                info@astrax.com
-                            </Link>
                         </div>
                     </div>
                 </div>
             </section>
         </>
-
     )
 }

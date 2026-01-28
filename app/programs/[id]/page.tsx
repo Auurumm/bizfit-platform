@@ -22,6 +22,7 @@ import {
   Tag,
 } from "lucide-react"
 import Layout from "@/components/layout/Layout"
+import PageHeader from "@/components/sections/PageHeader"
 
 interface RealGovernmentProgram {
   id: string
@@ -185,10 +186,12 @@ export default function SupportProgramDetailPage() {
     }
   }
 
+  // 로딩 상태
   if (loading) {
     return (
-      <Layout breadcrumbTitle="지원사업 상세">
-        <section className="section-program-detail position-relative overflow-hidden py-120">
+      <Layout>
+        <PageHeader title="지원사업 상세" />
+        <section className="py-120">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-8">
@@ -207,10 +210,12 @@ export default function SupportProgramDetailPage() {
     )
   }
 
+  // 에러 상태
   if (error || !program) {
     return (
-      <Layout breadcrumbTitle="지원사업 상세">
-        <section className="section-program-detail position-relative overflow-hidden py-120">
+      <Layout>
+        <PageHeader title="지원사업 상세" />
+        <section className="py-120">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-8">
@@ -243,9 +248,10 @@ export default function SupportProgramDetailPage() {
   const daysLeft = getDaysUntilDeadline(program.deadline)
 
   return (
-    <Layout breadcrumbTitle="지원사업 상세">
-      <section className="section-program-detail position-relative overflow-hidden py-120">
-        <div className="container position-relative z-1">
+    <Layout>
+      <PageHeader title="지원사업 상세" />
+      <section className="py-120">
+        <div className="container">
           {/* Header Actions */}
           <div className="row mb-5">
             <div className="col-12">
@@ -293,7 +299,7 @@ export default function SupportProgramDetailPage() {
               </div>
 
               {/* Title Section */}
-              <h1 className="ds-3 mb-4 text-anime-style-3">{program.title}</h1>
+              <h2 className="mb-4">{program.title}</h2>
               <div className="d-flex flex-column gap-2 mb-2">
                 <p className="fs-5 text-primary fw-semibold mb-0">
                   {program.ministry} • {program.organization}
@@ -376,7 +382,7 @@ export default function SupportProgramDetailPage() {
                     <Award className="text-white me-2" size={24} />
                     <h5 className="mb-0 text-white fw-bold">지원금액</h5>
                   </div>
-                  <div className="display-5 fw-bold text-white mb-2">{program.budget}</div>
+                  <div className="display-6 fw-bold text-white mb-2">{program.budget}</div>
                   <p className="text-white opacity-75 mb-0 fs-7">지원 유형: {program.supportType}</p>
                 </div>
               </div>

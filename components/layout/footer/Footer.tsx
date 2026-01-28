@@ -6,31 +6,17 @@ export default function Footer() {
 			{/* Footer */}
 			<footer>
 				<div className="section-footer-12 position-relative overflow-hidden">
-					{/* 배경 장식 */}
-					<div className="position-absolute top-50 start-50 translate-middle opacity-5 z-0">
-						<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-							<path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z"/>
-							<path d="M16 8V5c0-1.1.9-2 2-2"/>
-							<path d="M12 13h4"/>
-							<path d="M12 18h6a2 2 0 0 1 2 2v1"/>
-							<path d="M12 8h8"/>
-						</svg>
-					</div>
-
 					<div className="container-fluid">
 						<div className="container position-relative z-2">
 							<div className="row pb-120 pt-120">
 								{/* 회사 정보 */}
 								<div className="col-lg-4 col-md-6 mb-5">
 									<Link href="/" className="d-flex align-items-center gap-2 mb-4">
-										<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-											<path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z"/>
-											<path d="M16 8V5c0-1.1.9-2 2-2"/>
-											<path d="M12 13h4"/>
-											<path d="M12 18h6a2 2 0 0 1 2 2v1"/>
-											<path d="M12 8h8"/>
-										</svg>
-										<h4 className="mb-0 text-white">비즈핏</h4>
+										<img 
+											src="/assets/imgs/logo.png" 
+											alt="비즈핏" 
+											style={{ height: '70px', width: 'auto' }}
+										/>
 									</Link>
 									<p className="text-white opacity-75 mb-4">
 										AI 기반 자가진단과 전문가 매칭을 통해 스타트업과 중소기업의 성장을 지원하는 맞춤형 정부지원사업 매칭 플랫폼입니다.
@@ -40,13 +26,13 @@ export default function Footer() {
 											<i className="bi bi-geo-alt"></i>
 											<span>울산광역시 남구 테크노산업로 55번길</span>
 										</a>
-										<a href="mailto:contact@bizfit.co.kr" className="d-flex align-items-center gap-2 text-white opacity-75 hover-effect-1">
+										<a href="mailto:official.haedeun@gmail.com" className="d-flex align-items-center gap-2 text-white opacity-75 hover-effect-1">
 											<i className="bi bi-envelope"></i>
-											<span>contact@bizfit.co.kr</span>
+											<span>official.haedeun@gmail.com</span>
 										</a>
-										<a href="tel:1588-0000" className="d-flex align-items-center gap-2 text-white opacity-75 hover-effect-1">
+										<a href="tel:010-3374-4650" className="d-flex align-items-center gap-2 text-white opacity-75 hover-effect-1">
 											<i className="bi bi-telephone"></i>
-											<span>1588-0000</span>
+											<span>010-3374-4650</span>
 										</a>
 									</div>
 								</div>
@@ -127,15 +113,12 @@ export default function Footer() {
 
 							{/* 중간 구분선 + 로고 및 빠른 링크 */}
 							<div className="d-flex flex-column flex-lg-row gap-3 align-items-center justify-content-between py-4 border-top border-bottom border-opacity-25 border-white">
-								<Link className="d-flex align-items-center gap-2" href="/">
-									<svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="#794AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-										<path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z"/>
-										<path d="M16 8V5c0-1.1.9-2 2-2"/>
-										<path d="M12 13h4"/>
-										<path d="M12 18h6a2 2 0 0 1 2 2v1"/>
-										<path d="M12 8h8"/>
-									</svg>
-									<h5 className="mb-0 text-white">비즈핏</h5>
+								<Link href="/">
+									<img 
+										src="/assets/imgs/logo.png" 
+										alt="비즈핏" 
+										style={{ height: '70px', width: 'auto' }}
+									/>
 								</Link>
 								<div className="d-flex align-items-center justify-content-center flex-wrap gap-md-4 gap-3">
 									<Link href="/diagnosis" className="btn-text text-white hover-effect-1">
@@ -156,50 +139,17 @@ export default function Footer() {
 								</div>
 							</div>
 
-							{/* 하단 저작권 및 SNS */}
-							<div className="d-flex flex-column flex-lg-row gap-3 align-items-center py-4 justify-content-between">
+							{/* 하단 저작권 */}
+							<div className="d-flex flex-column flex-lg-row gap-3 align-items-center py-4 justify-content-center">
 								<div className="d-flex flex-md-row flex-column gap-2 align-items-center text-center">
 									<p className="text-white opacity-50 mb-0">
-										© 2025 비즈핏(BizFit). All Rights Reserved.
+										© 2025 제이앤그로스. All Rights Reserved.
 									</p>
 									<span className="text-white opacity-25 d-none d-md-inline">|</span>
 									<p className="text-white opacity-50 mb-0">
 										사업자등록번호: 000-00-00000
 									</p>
 								</div>
-								
-								{/* SNS 링크 */}
-								<ul className="list-unstyled d-flex mb-0 justify-content-center gap-3">
-									<li>
-										<a href="https://blog.naver.com" target="_blank" rel="noopener noreferrer" className="d-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 hover-effect-1" style={{ width: '40px', height: '40px' }}>
-											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
-												<path d="M16.273 12.845 7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/>
-											</svg>
-										</a>
-									</li>
-									<li>
-										<a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="d-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 hover-effect-1" style={{ width: '40px', height: '40px' }}>
-											<i className="bi bi-instagram text-white"></i>
-										</a>
-									</li>
-									<li>
-										<a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="d-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 hover-effect-1" style={{ width: '40px', height: '40px' }}>
-											<i className="bi bi-youtube text-white"></i>
-										</a>
-									</li>
-									<li>
-										<a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="d-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 hover-effect-1" style={{ width: '40px', height: '40px' }}>
-											<i className="bi bi-linkedin text-white"></i>
-										</a>
-									</li>
-									<li>
-										<a href="https://pf.kakao.com" target="_blank" rel="noopener noreferrer" className="d-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-10 hover-effect-1" style={{ width: '40px', height: '40px' }}>
-											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
-												<path d="M12 3c-5.52 0-10 3.59-10 8.03 0 2.84 1.87 5.33 4.68 6.73l-.96 3.56c-.08.3.26.54.52.37l4.23-2.79c.5.05 1 .07 1.53.07 5.52 0 10-3.59 10-8.03S17.52 3 12 3z"/>
-											</svg>
-										</a>
-									</li>
-								</ul>
 							</div>
 						</div>
 					</div>

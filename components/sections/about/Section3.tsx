@@ -1,423 +1,81 @@
-'use client'
-import { Swiper, SwiperSlide } from "swiper/react"
-import { Autoplay, Navigation, Pagination } from "swiper/modules"
 import Link from "next/link"
 
-const swiperOptions = {
-	modules: [Autoplay, Pagination, Navigation],
-	slidesPerView: 4,
-	spaceBetween: 30,
-	autoplay: {
-		delay: 2500,
-		disableOnInteraction: false,
-	},
-	loop: true,
-	breakpoints: {
-		320: {
-			slidesPerView: 1,
-			spaceBetween: 30,
-		},
-		575: {
-			slidesPerView: 2,
-			spaceBetween: 30,
-		},
-		767: {
-			slidesPerView: 2,
-			spaceBetween: 30,
-		},
-		991: {
-			slidesPerView: 4,
-			spaceBetween: 30,
-		},
-	}
-}
-
 export default function Section3() {
-	return (
-		<>
-			{/*law-firm section 7*/}
-			<section className="law-firm-home-section-7 position-relative overflow-hidden pt-120 pb-120">
-				<div className="container">
-					<div className="text-center">
-						<span className="content-top btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2 bg-white">
-							advisors
-						</span>
-						<h2 className="mt-3 text-anime-style-2">
-							Industry experts
-						</h2>
-					</div>
-					<div className="row pt-80">
-						<div className="col-12 position-relative">
-							{/* Swiper */}
-							<Swiper {...swiperOptions} className="swiper slider-4 ps-3">
-								<div className="swiper-wrapper z-1">
-									<SwiperSlide>
-										<div
-											className="card-team overflow-hidden"
-											data-aos="fade-up"
-											data-aos-delay={0}
-										>
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-1.png"
-													alt="AstraX"
-												/>
-												<div className="team-overlay">
-													<ul className="list-unstyled d-flex mb-0 gap-2 justify-content-center position-absolute top-50 start-50 translate-middle">
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 320 512"
-																	>
-																		<path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 512 512"
-																	>
-																		<path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-													</ul>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">Head Of Idea</p>
-											<Link href="/single-content">
-												<h5>
-													Amelia K. <strong>Hamilton</strong>
-												</h5>
-											</Link>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div
-											className="card-team overflow-hidden"
-											data-aos="fade-up"
-											data-aos-delay={200}
-										>
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-2.png"
-													alt="AstraX"
-												/>
-												<div className="team-overlay">
-													<ul className="list-unstyled d-flex mb-0 gap-2 justify-content-center position-absolute top-50 start-50 translate-middle">
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 320 512"
-																	>
-																		<path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 512 512"
-																	>
-																		<path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-													</ul>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">Head Of Idea</p>
-											<Link href="/single-content">
-												<h5>
-													Isabella F. <strong>Monroe</strong>
-												</h5>
-											</Link>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div
-											className="card-team overflow-hidden"
-											data-aos="fade-up"
-											data-aos-delay={400}
-										>
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-3.png"
-													alt="AstraX"
-												/>
-												<div className="team-overlay">
-													<ul className="list-unstyled d-flex mb-0 gap-2 justify-content-center position-absolute top-50 start-50 translate-middle">
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 320 512"
-																	>
-																		<path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 512 512"
-																	>
-																		<path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-													</ul>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">Head Of Idea</p>
-											<Link href="/single-content">
-												<h5>
-													Gabriella S. <strong>Adams</strong>
-												</h5>
-											</Link>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div
-											className="card-team overflow-hidden"
-											data-aos="fade-up"
-											data-aos-delay={600}
-										>
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-4.png"
-													alt="AstraX"
-												/>
-												<div className="team-overlay">
-													<ul className="list-unstyled d-flex mb-0 gap-2 justify-content-center position-absolute top-50 start-50 translate-middle">
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 320 512"
-																	>
-																		<path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 512 512"
-																	>
-																		<path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-													</ul>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">Head Of Idea</p>
-											<Link href="/single-content">
-												<h5>
-													Amelia K. <strong>Hamilton</strong>
-												</h5>
-											</Link>
-										</div>
-									</SwiperSlide>
-									<SwiperSlide>
-										<div
-											className="card-team overflow-hidden"
-											data-aos="fade-up"
-											data-aos-delay={800}
-										>
-											<div className="position-relative d-inline-flex">
-												<img
-													src="assets/imgs/pages/law-firm/page-home/home-section-7/img-2.png"
-													alt="AstraX"
-												/>
-												<div className="team-overlay">
-													<ul className="list-unstyled d-flex mb-0 gap-2 justify-content-center position-absolute top-50 start-50 translate-middle">
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 320 512"
-																	>
-																		<path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 512 512"
-																	>
-																		<path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-														<li>
-															<Link href="#">
-																<span className="icon d-inline-flex text-center align-items-center justify-content-center">
-																	<svg
-																		xmlns="http://www.w3.org/2000/svg"
-																		viewBox="0 0 576 512"
-																	>
-																		<path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
-																	</svg>
-																</span>
-															</Link>
-														</li>
-													</ul>
-												</div>
-											</div>
-											<p className="btn-text text-primary mt-5">Head Of Idea</p>
-											<Link href="/single-content">
-												<h5>
-													Isabella F. <strong>Monroe</strong>
-												</h5>
-											</Link>
-										</div>
-									</SwiperSlide>
-								</div>
-							</Swiper>
-						</div>
-					</div>
-					{/* Swiper JS */}
-				</div>
-			</section>
-		</>
-	)
+    return (
+        <>
+            {/*bizfit about section 3 - 비전*/}
+            <section className="law-firm-about-section-3 position-relative py-120 overflow-hidden">
+                <div className="container">
+                    <div className="row align-items-center">
+                        {/* 왼쪽: 비전 */}
+                        <div className="col-lg-6 pe-lg-5" data-aos="fade-right">
+                            <span className="content-top btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2 bg-white">
+                                우리의 비전
+                            </span>
+                            <h2 className="mt-3 mb-4">
+                                모든 중소기업이<br />
+                                <strong>성장 기회를 놓치지 않는 세상</strong>
+                            </h2>
+                            <p className="text-muted mb-4">
+                                매년 수천 개의 정부 지원사업이 공고되지만,
+                                정보 부족으로 신청조차 하지 못하는 기업이 많습니다.
+                            </p>
+                            <p className="text-muted mb-4">
+                                비즈핏은 복잡한 지원사업 정보를 쉽게 정리하고,
+                                AI 기술로 기업별 맞춤 추천을 제공하여
+                                더 많은 기업이 성장의 기회를 얻을 수 있도록 돕습니다.
+                            </p>
+                            <Link href="/diagnosis" className="btn btn-primary hover-up">
+                                <span>무료 AI 진단 시작하기</span>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={16}
+                                    height={16}
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                >
+                                    <path
+                                        d="M15.8167 7.55759C15.8165 7.5574 15.8163 7.55719 15.8161 7.557L12.5504 4.307C12.3057 4.06353 11.91 4.06444 11.6665 4.30912C11.423 4.55378 11.4239 4.9495 11.6686 5.193L13.8612 7.375H0.625C0.279813 7.375 0 7.65481 0 8C0 8.34519 0.279813 8.625 0.625 8.625H13.8612L11.6686 10.807C11.4239 11.0505 11.423 11.4462 11.6665 11.6909C11.91 11.9356 12.3058 11.9364 12.5504 11.693L15.8162 8.443C15.8163 8.44281 15.8165 8.44259 15.8167 8.4424C16.0615 8.19809 16.0607 7.80109 15.8167 7.55759Z"
+                                        fill="white"
+                                    />
+                                </svg>
+                            </Link>
+                        </div>
+
+                        {/* 오른쪽: 이런 분들께 추천 */}
+                        <div className="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
+                            <div className="card border-0 shadow-lg p-4 p-lg-5">
+                                <h4 className="fw-bold mb-4">
+                                    <i className="bi bi-check-circle-fill text-primary me-2"></i>
+                                    이런 분들께 추천합니다
+                                </h4>
+                                <ul className="list-unstyled mb-0">
+                                    <li className="d-flex align-items-start mb-3">
+                                        <i className="bi bi-check2 text-primary me-3 mt-1"></i>
+                                        <span>처음 지원사업을 신청하는 <strong>예비창업자</strong></span>
+                                    </li>
+                                    <li className="d-flex align-items-start mb-3">
+                                        <i className="bi bi-check2 text-primary me-3 mt-1"></i>
+                                        <span>적합한 지원사업을 찾기 어려운 <strong>중소기업 대표님</strong></span>
+                                    </li>
+                                    <li className="d-flex align-items-start mb-3">
+                                        <i className="bi bi-check2 text-primary me-3 mt-1"></i>
+                                        <span>사업계획서 작성에 도움이 필요한 <strong>스타트업</strong></span>
+                                    </li>
+                                    <li className="d-flex align-items-start mb-3">
+                                        <i className="bi bi-check2 text-primary me-3 mt-1"></i>
+                                        <span>R&D, 수출, 고용 등 <strong>특정 분야 지원</strong>이 필요한 기업</span>
+                                    </li>
+                                    <li className="d-flex align-items-start">
+                                        <i className="bi bi-check2 text-primary me-3 mt-1"></i>
+                                        <span>마감 공고를 놓치지 않고 챙기고 싶은 <strong>담당자</strong></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </>
+    )
 }

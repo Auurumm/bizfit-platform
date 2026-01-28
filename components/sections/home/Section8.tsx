@@ -96,12 +96,12 @@ export default function Section8() {
 													</g>
 												</svg>
 											</div>
-											<a href="tel:1588-0000">
-												<h6 className="mt-5 mb-3 fs-20 text-white">
-													1588-0000
+											<a href="tel:010-3374-4650">
+												<h6 className="mt-5 mb-3 fs-20 text-white" style={{ whiteSpace: 'nowrap' }}>
+													010-3374-4650
 												</h6>
 											</a>
-											<p className="mb-0">
+											<p className="mb-0" style={{ whiteSpace: 'nowrap' }}>
 												평일 09:00 - 18:00 상담 가능
 											</p>
 										</div>
