@@ -21,11 +21,12 @@ export default function Section1() {
                                     data-aos="fade-up"
                                     data-aos-delay={200}
                                 >
-                                    <img
-                                        className="position-absolute top-100 start-100 z-2 translate-middle z-1 border border-4 border-white shadow"
-                                        src="assets/imgs/pages/law-firm/page-home/home-section-4/img-2.png"
-                                        alt="비즈핏"
-                                    />
+                                        <img
+                                            className="position-absolute z-2 border border-4 border-white shadow"
+                                            src="assets/imgs/pages/law-firm/page-home/home-section-4/img-2.png"
+                                            alt="비즈핏"
+                                            style={{ bottom: '-30px', left: '210px' }}
+                                        />
                                 </div>
                             </div>
                         </div>

@@ -14,7 +14,7 @@ export default function Section1() {
                         <div className="row align-items-center">
                             <div className="col-12 text-center">
                                 <span className="content-top btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2">
-                                    #01 law firm &amp; agency
+                                    # BIZFIT PLATFORM
                                 </span>
                                 <h1 className="text-white ds-1 mt-4 text-anime-style-2 text-anime-style-2">
                                     Emerging Cybersecurity Trends and Innovations for 2025

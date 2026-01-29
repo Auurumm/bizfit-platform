@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Layout from "@/components/layout/Layout"
 import { useAuth } from "@/lib/AuthContext"
+import PageHeader from "@/components/sections/PageHeader"
 
 // ⚠️ Google Apps Script 웹 앱 URL을 여기에 입력하세요
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjCdv9Cg3ooAz5E-DE27oOkVhPUCmA_mChScMc5zL_cY81M7EpiK082RSfCVbpn8Xm/exec"
@@ -362,21 +363,10 @@ export default function ExpertsPage() {
 
 	return (
 		<Layout>
-			{/* 페이지 헤더 */}
-			<section className="page-header position-relative overflow-hidden pt-160 pb-100" 
-				style={{ backgroundColor: '#152833' }}>
-				<div className="container position-relative z-1">
-					<div className="text-center">
-						<span className="btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2 d-inline-block mb-3">
-							전문가 네트워크
-						</span>
-						<h1 className="text-white ds-3 mb-3">전문가 매칭</h1>
-						<p className="text-white text-opacity-75 fs-5">
-							분야별 전문가와 1:1 상담을 통해 맞춤형 컨설팅을 받아보세요
-						</p>
-					</div>
-				</div>
-			</section>
+			<PageHeader title="전문가 매칭" />
+		
+			{/* 검색 및 필터 */}
+			<section className="py-5 bg-white border-bottom"></section>
 
 			{/* 검색 및 필터 */}
 			<section className="py-5 bg-white border-bottom">
@@ -395,21 +385,57 @@ export default function ExpertsPage() {
 							</div>
 						</div>
 						<div className="col-lg-8">
-							<div className="d-flex flex-wrap gap-2 align-items-center">
-								{categories.map((category) => (
-									<button
-										key={category.id}
-										onClick={() => setSelectedCategory(category.id)}
-										className={`btn ${selectedCategory === category.id 
-											? 'btn-primary' 
-											: 'btn-outline-secondary'}`}
-									>
-										{category.name}
-									</button>
-								))}
+							<div className="d-flex align-items-center gap-2">
+								{/* 왼쪽 화살표 */}
+								<button 
+									className="btn btn-sm btn-outline-secondary rounded-circle flex-shrink-0"
+									onClick={() => {
+										const container = document.getElementById('filter-container')
+										if (container) container.scrollLeft -= 150
+									}}
+									style={{ width: '32px', height: '32px', padding: 0 }}
+								>
+									<i className="bi bi-chevron-left"></i>
+								</button>
+								
+								{/* 필터 버튼들 */}
+								<div 
+									id="filter-container"
+									className="d-flex gap-2 align-items-center overflow-hidden flex-grow-1"
+									style={{ 
+										whiteSpace: 'nowrap',
+										scrollBehavior: 'smooth'
+									}}
+								>
+									{categories.map((category) => (
+										<button
+											key={category.id}
+											onClick={() => setSelectedCategory(category.id)}
+											className={`btn flex-shrink-0 ${selectedCategory === category.id 
+												? 'btn-primary' 
+												: 'btn-outline-secondary'}`}
+										>
+											{category.name}
+										</button>
+									))}
+								</div>
+								
+								{/* 오른쪽 화살표 */}
+								<button 
+									className="btn btn-sm btn-outline-secondary rounded-circle flex-shrink-0"
+									onClick={() => {
+										const container = document.getElementById('filter-container')
+										if (container) container.scrollLeft += 150
+									}}
+									style={{ width: '32px', height: '32px', padding: 0 }}
+								>
+									<i className="bi bi-chevron-right"></i>
+								</button>
+								
+								{/* 새로고침 */}
 								<button
 									onClick={loadExperts}
-									className="btn btn-outline-secondary ms-auto"
+									className="btn btn-outline-secondary flex-shrink-0"
 									title="새로고침"
 								>
 									<i className="bi bi-arrow-clockwise"></i>
