@@ -1,9 +1,11 @@
 // ============================================
-// 기업마당(bizinfo.go.kr) API 연동 (개선 버전)
+// 기업마당(bizinfo.go.kr) API 연동 (Supabase 캐싱 버전)
+// - Supabase에 캐싱 (1시간 유효)
 // - 마감일 파싱 개선
-// - 캐싱 추가 (5분)
 // - 마감 임박순 정렬
 // ============================================
+
+import { supabase } from "./supabase"
 
 // 기업마당 API 원본 응답 타입
 export interface BizinfoProgram {
@@ -65,22 +67,88 @@ export interface BizinfoProgram {
   }
   
   // ============================================
-  // 캐시 설정
+  // Supabase 캐시 설정
   // ============================================
-  interface CacheData {
+  const CACHE_DURATION = 60 * 60 * 1000 // 1시간
+  const CACHE_ID = 'default'
+  
+  interface CachedData {
+    programs: GovernmentProgram[]
+    total_count: number
+    last_updated: string
+    data_source: string
+    cached_at: string
+  }
+  
+  // ============================================
+  // Supabase에서 캐시 조회
+  // ============================================
+  async function getCachedPrograms(): Promise<{
     programs: GovernmentProgram[]
     totalCount: number
     lastUpdated: string
     dataSource: string
-    cachedAt: number
+    isValid: boolean
+  } | null> {
+    try {
+      const { data, error } = await supabase
+        .from('cached_programs')
+        .select('*')
+        .eq('id', CACHE_ID)
+        .single()
+  
+      if (error || !data) {
+        console.log('📦 캐시 없음')
+        return null
+      }
+  
+      const cachedAt = new Date(data.cached_at).getTime()
+      const isValid = Date.now() - cachedAt < CACHE_DURATION
+  
+      console.log(`📦 캐시 발견: ${isValid ? '유효' : '만료됨'} (${Math.round((Date.now() - cachedAt) / 1000 / 60)}분 경과)`)
+  
+      return {
+        programs: data.programs as GovernmentProgram[],
+        totalCount: data.total_count,
+        lastUpdated: data.last_updated,
+        dataSource: data.data_source + (isValid ? ' (캐시)' : ' (만료)'),
+        isValid,
+      }
+    } catch (error) {
+      console.error('❌ 캐시 조회 오류:', error)
+      return null
+    }
   }
   
-  let programsCache: CacheData | null = null
-  const CACHE_DURATION = 6 * 60 * 60 * 1000 // 6시간
+  // ============================================
+  // Supabase에 캐시 저장
+  // ============================================
+  async function saveCachedPrograms(
+    programs: GovernmentProgram[],
+    totalCount: number,
+    lastUpdated: string,
+    dataSource: string
+  ): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('cached_programs')
+        .upsert({
+          id: CACHE_ID,
+          programs,
+          total_count: totalCount,
+          last_updated: lastUpdated,
+          data_source: dataSource,
+          cached_at: new Date().toISOString(),
+        })
   
-  function isCacheValid(): boolean {
-    if (!programsCache) return false
-    return Date.now() - programsCache.cachedAt < CACHE_DURATION
+      if (error) {
+        console.error('❌ 캐시 저장 오류:', error)
+      } else {
+        console.log('✅ Supabase에 캐시 저장 완료')
+      }
+    } catch (error) {
+      console.error('❌ 캐시 저장 예외:', error)
+    }
   }
   
   // ============================================
@@ -523,27 +591,12 @@ function parseDeadline(reqstBeginEndDe: string, bizPrdCn: string): {
   // ============================================
   // 기업마당 API 호출
   // ============================================
-  export async function fetchBizinfoPrograms(options?: {
-    searchCnt?: number
-    pblancNm?: string
-    forceRefresh?: boolean
-  }): Promise<{
+  async function fetchFromBizinfoApi(searchCnt: number = 100): Promise<{
     programs: GovernmentProgram[]
     totalCount: number
     lastUpdated: string
     dataSource: string
   }> {
-    // 캐시 확인 (강제 새로고침이 아닌 경우)
-    if (!options?.forceRefresh && isCacheValid() && programsCache) {
-      console.log("📦 캐시된 데이터 사용")
-      return {
-        programs: programsCache.programs,
-        totalCount: programsCache.totalCount,
-        lastUpdated: programsCache.lastUpdated,
-        dataSource: programsCache.dataSource + " (캐시)",
-      }
-    }
-  
     const apiKey = process.env.BIZINFO_API_KEY
     
     if (!apiKey) {
@@ -551,7 +604,6 @@ function parseDeadline(reqstBeginEndDe: string, bizPrdCn: string): {
       return loadBackupData("API 키 미설정")
     }
   
-    const searchCnt = options?.searchCnt || 100
     const baseUrl = "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do"
     
     const params = new URLSearchParams({
@@ -560,14 +612,10 @@ function parseDeadline(reqstBeginEndDe: string, bizPrdCn: string): {
       searchCnt: searchCnt.toString(),
     })
   
-    if (options?.pblancNm) {
-      params.append("pblancNm", options.pblancNm)
-    }
-  
     const url = `${baseUrl}?${params.toString()}`
   
     try {
-      console.log(`🔄 기업마당 API 호출: ${url.substring(0, 80)}...`)
+      console.log(`🔄 기업마당 API 호출 시작...`)
       
       const response = await fetch(url, {
         headers: {
@@ -582,45 +630,75 @@ function parseDeadline(reqstBeginEndDe: string, bizPrdCn: string): {
   
       const data: BizinfoApiResponse = await response.json()
       
-      // 디버깅용 로그
-      const jsonStr = JSON.stringify(data).substring(0, 500)
-      console.log(`📦 API 응답 (처음 500자): ${jsonStr}`)
-      console.log(`📊 API 응답 구조: resultCode=${data.resultCode}, totalCnt=${data.totalCnt}, jsonArray 길이=${data.jsonArray?.length}`)
+      console.log(`📊 API 응답: resultCode=${data.resultCode}, totalCnt=${data.totalCnt}, 데이터 수=${data.jsonArray?.length}`)
   
       if (!data.jsonArray || data.jsonArray.length === 0) {
         console.warn("⚠️ API에서 데이터가 없습니다. 백업 데이터를 사용합니다.")
         return loadBackupData("API 응답 없음")
       }
   
-      // 데이터 변환
+      // 데이터 변환 및 정렬
       let programs = data.jsonArray.map(transformBizinfoProgram)
-      
-      // 마감된 공고 제외 (선택적)
-      // programs = programs.filter(p => p.status !== "closed")
-      
-      // 마감 임박순 정렬
       programs = sortByDeadline(programs)
       
       console.log(`✅ 기업마당 API에서 ${programs.length}개 지원사업 로드 완료`)
   
-      const result = {
+      return {
         programs,
         totalCount: data.totalCnt || programs.length,
         lastUpdated: new Date().toISOString().split("T")[0],
         dataSource: "기업마당(bizinfo.go.kr) 실시간 API",
       }
-  
-      // 캐시 저장
-      programsCache = {
-        ...result,
-        cachedAt: Date.now(),
-      }
-  
-      return result
     } catch (error) {
       console.error("❌ 기업마당 API 호출 오류:", error)
       return loadBackupData("API 오류")
     }
+  }
+  
+  // ============================================
+  // 메인 함수: 캐시 우선, 없으면 API 호출
+  // ============================================
+  export async function fetchBizinfoPrograms(options?: {
+    searchCnt?: number
+    pblancNm?: string
+    forceRefresh?: boolean
+  }): Promise<{
+    programs: GovernmentProgram[]
+    totalCount: number
+    lastUpdated: string
+    dataSource: string
+  }> {
+    const searchCnt = options?.searchCnt || 100
+    const forceRefresh = options?.forceRefresh || false
+  
+    // 1. 강제 새로고침이 아니면 캐시 확인
+    if (!forceRefresh) {
+      const cached = await getCachedPrograms()
+      
+      if (cached && cached.isValid) {
+        console.log('⚡ Supabase 캐시 사용 (초고속)')
+        return {
+          programs: cached.programs,
+          totalCount: cached.totalCount,
+          lastUpdated: cached.lastUpdated,
+          dataSource: cached.dataSource,
+        }
+      }
+    }
+  
+    // 2. 캐시 없음 또는 만료됨 → API 호출
+    console.log('🔄 기업마당 API 새로 호출')
+    const result = await fetchFromBizinfoApi(searchCnt)
+  
+    // 3. 결과를 Supabase에 저장
+    await saveCachedPrograms(
+      result.programs,
+      result.totalCount,
+      result.lastUpdated,
+      result.dataSource
+    )
+  
+    return result
   }
   
   // ============================================

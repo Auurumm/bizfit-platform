@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import Link from "next/link"
 import Layout from "@/components/layout/Layout"
 import PageHeader from "@/components/sections/PageHeader"
@@ -82,7 +82,8 @@ const STATUS_OPTIONS = [
 export default function ProgramsPage() {
   const { user } = useAuth()
   
-  const [programs, setPrograms] = useState<GovernmentProgram[]>([])
+  // 원본 데이터 (API에서 한 번만 가져옴)
+  const [allPrograms, setAllPrograms] = useState<GovernmentProgram[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dataSource, setDataSource] = useState("")
@@ -102,6 +103,57 @@ export default function ProgramsPage() {
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
+
+  // ============================================
+  // 클라이언트 사이드 필터링 (useMemo로 최적화)
+  // ============================================
+  const filteredPrograms = useMemo(() => {
+    let filtered = [...allPrograms]
+
+    // 1. 마감 여부 필터
+    if (!showClosed) {
+      filtered = filtered.filter(p => p.status !== "closed")
+    }
+
+    // 2. 검색어 필터
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(p => 
+        p.title.toLowerCase().includes(query) ||
+        p.organization.toLowerCase().includes(query) ||
+        p.ministry.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query) ||
+        p.tags.some(tag => tag.toLowerCase().includes(query))
+      )
+    }
+
+    // 3. 카테고리 필터
+    if (categoryFilter) {
+      filtered = filtered.filter(p => p.category === categoryFilter)
+    }
+
+    // 4. 상태 필터
+    if (statusFilter) {
+      filtered = filtered.filter(p => p.status === statusFilter)
+    }
+
+    // 5. 정렬: 마감 임박순 (daysLeft 오름차순)
+    filtered.sort((a, b) => {
+      // closed 상태는 맨 뒤로
+      if (a.status === "closed" && b.status !== "closed") return 1
+      if (a.status !== "closed" && b.status === "closed") return -1
+      
+      // daysLeft가 null인 경우 처리
+      if (a.daysLeft === null && b.daysLeft === null) return 0
+      if (a.daysLeft === null) return 1
+      if (b.daysLeft === null) return -1
+      
+      // 마감 임박순 정렬
+      return a.daysLeft - b.daysLeft
+    })
+
+    return filtered
+  }, [allPrograms, searchQuery, categoryFilter, statusFilter, showClosed])
 
   // ============================================
   // 북마크 로드
@@ -176,7 +228,7 @@ export default function ProgramsPage() {
   }
 
   // ============================================
-  // 데이터 로드
+  // 데이터 로드 (최초 1회 또는 새로고침 시에만)
   // ============================================
   const fetchPrograms = useCallback(async (refresh = false) => {
     try {
@@ -184,10 +236,6 @@ export default function ProgramsPage() {
       setError(null)
 
       const params = new URLSearchParams()
-      if (categoryFilter) params.append("category", categoryFilter)
-      if (statusFilter) params.append("status", statusFilter)
-      if (searchQuery) params.append("search", searchQuery)
-      if (showClosed) params.append("showClosed", "true")
       if (refresh) params.append("refresh", "true")
 
       const url = `/api/programs${params.toString() ? `?${params.toString()}` : ""}`
@@ -200,7 +248,7 @@ export default function ProgramsPage() {
       const data: ProgramsResponse = await response.json()
       
       if (data.success) {
-        setPrograms(data.programs)
+        setAllPrograms(data.programs)
         setDataSource(data.dataSource)
         setTotalAvailable(data.totalAvailable || data.totalCount)
       } else {
@@ -211,16 +259,19 @@ export default function ProgramsPage() {
     } finally {
       setLoading(false)
     }
-  }, [categoryFilter, statusFilter, searchQuery, showClosed])
+  }, [])
 
+  // 최초 로드
   useEffect(() => {
     fetchPrograms()
   }, [fetchPrograms])
 
+  // 북마크 로드
   useEffect(() => {
     loadBookmarks()
   }, [loadBookmarks])
 
+  // 필터 변경 시 첫 페이지로
   useEffect(() => {
     setCurrentPage(1)
   }, [categoryFilter, statusFilter, searchQuery, showClosed])
@@ -228,9 +279,9 @@ export default function ProgramsPage() {
   // ============================================
   // 페이지네이션 계산
   // ============================================
-  const totalPages = Math.ceil(programs.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredPrograms.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const currentPrograms = programs.slice(startIndex, startIndex + itemsPerPage)
+  const currentPrograms = filteredPrograms.slice(startIndex, startIndex + itemsPerPage)
 
   // ============================================
   // 상태 배지 컴포넌트
@@ -298,7 +349,7 @@ export default function ProgramsPage() {
   // ============================================
   // 렌더링 - 로딩
   // ============================================
-  if (loading && programs.length === 0) {
+  if (loading && allPrograms.length === 0) {
     return (
       <Layout>
         <PageHeader title="지원사업" />
@@ -370,8 +421,8 @@ export default function ProgramsPage() {
             <div>
               <p className="text-muted mb-0">
                 전체 <strong className="text-primary">{totalAvailable}개</strong> 중{" "}
-                <strong className="text-primary">{programs.length}개</strong> 표시
-                {statusFilter === "closing" && " (마감 임박 순)"}
+                <strong className="text-primary">{filteredPrograms.length}개</strong> 표시
+                {(searchQuery || categoryFilter || statusFilter) && " (필터링됨)"}
               </p>
             </div>
             <div className="d-flex flex-wrap gap-2 mt-3 mt-md-0">
