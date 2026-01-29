@@ -87,3 +87,16 @@ input, textarea, select, button {
     font-size: 1.35rem !important;
   }
 }
+
+/* btn-outline-primary hover 색상 통일 */
+.btn-outline-primary:hover {
+  background-color: #B98E44 !important;
+  border-color: #B98E44 !important;
+  color: #fff !important;
+}
+
+/* btn-primary hover */
+.btn-primary:hover {
+  background-color: #96712e !important;
+  border-color: #96712e !important;
+}

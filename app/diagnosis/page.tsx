@@ -8,6 +8,9 @@ import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { supabase } from "@/lib/supabase"
 
+// Google Apps Script URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjCdv9Cg3ooAz5E-DE27oOkVhPUCmA_mChScMc5zL_cY81M7EpiK082RSfCVbpn8Xm/exec"
+
 interface DiagnosisForm {
   companyName: string
   businessType: string
@@ -72,62 +75,22 @@ interface DiagnosisResult {
   dataSource: string
 }
 
-// ============================================
-// XML 파서 함수 (브라우저용)
-// ============================================
-
-function parseXMLToPrograms(xmlText: string): GovernmentProgram[] {
-  try {
-    const parser = new DOMParser()
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml")
-    
-    // 에러 체크
-    const resultCode = xmlDoc.querySelector("resultCode")?.textContent
-    if (resultCode !== "00") {
-      console.log("API 에러:", xmlDoc.querySelector("resultMsg")?.textContent)
-      return []
-    }
-
-    const items = xmlDoc.querySelectorAll("item")
-    const programs: GovernmentProgram[] = []
-
-    items.forEach((item, index) => {
-      const getText = (tag: string) => item.querySelector(tag)?.textContent || ""
-      
-      const title = getText("title")
-      const deadline = getText("applicationEndDate")
-      
-      programs.push({
-        id: `mss-${getText("itemId") || index}`,
-        title: title,
-        organization: "중소벤처기업부",
-        ministry: "중소벤처기업부",
-        category: categorizeProgram(title),
-        budget: "지원금액 상세페이지 확인",
-        deadline: deadline || "상시접수",
-        registrationDate: getText("applicationStartDate"),
-        description: cleanDescription(getText("dataContents")),
-        requirements: ["상세페이지에서 자격요건 확인"],
-        applicationUrl: getText("viewUrl") || "https://www.mss.go.kr",
-        contactInfo: formatContact(getText("writerName"), getText("writerPosition"), getText("writerPhone")),
-        status: determineStatus(deadline),
-        tags: extractTags(title),
-        region: "전국",
-        targetCompany: "중소기업",
-        supportType: "정부지원사업",
-        targetBusinessTypes: ["sme", "startup", "venture"],
-        targetIndustries: inferIndustries(title),
-        targetChallenges: inferChallenges(title),
-        targetGoals: ["growth", "innovation"],
-      })
-    })
-
-    return programs
-  } catch (error) {
-    console.error("XML 파싱 오류:", error)
-    return []
-  }
+interface Expert {
+  id: string
+  name: string
+  title: string
+  company: string
+  specialties: string[]
+  category: string
+  image: string
+  experience: number
+  rating: number
+  reviews: number
 }
+
+// ============================================
+// 유틸리티 함수
+// ============================================
 
 function categorizeProgram(title: string): string {
   const lower = title.toLowerCase()
@@ -201,6 +164,65 @@ function inferChallenges(title: string): string[] {
   return challenges
 }
 
+// 카테고리 매칭 함수
+const matchExpertCategory = (challenges: string[], goals: string[]): string[] => {
+  const categoryMap: Record<string, string[]> = {
+    startup: ["funding", "marketing", "growth"],
+    finance: ["funding", "efficiency"],
+    marketing: ["marketing", "export", "growth"],
+    tech: ["technology", "digital", "innovation"],
+    legal: ["certification"],
+    hr: ["talent", "employment"],
+  }
+  
+  const matchedCategories: string[] = []
+  const userNeeds = [...challenges, ...goals]
+  
+  Object.entries(categoryMap).forEach(([category, needs]) => {
+    if (needs.some(need => userNeeds.includes(need))) {
+      matchedCategories.push(category)
+    }
+  })
+  
+  return matchedCategories.length > 0 ? matchedCategories : ["startup"]
+}
+
+// Google Drive URL 변환 함수
+const convertGoogleDriveUrl = (url: string): string => {
+  if (!url) return "/assets/imgs/default-expert.png"
+  if (url.includes('lh3.googleusercontent.com')) return url
+  if (url.startsWith('http') && !url.includes('drive.google.com')) return url
+  if (url.startsWith('/')) return url
+  
+  const patterns = [
+    /\/d\/([a-zA-Z0-9_-]+)/,
+    /id=([a-zA-Z0-9_-]+)/,
+    /\/file\/d\/([a-zA-Z0-9_-]+)/
+  ]
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) {
+      return `https://lh3.googleusercontent.com/d/${match[1]}`
+    }
+  }
+  
+  return "/assets/imgs/default-expert.png"
+}
+
+// 카테고리 한글 변환
+const getCategoryLabel = (category: string): string => {
+  const labels: Record<string, string> = {
+    startup: '창업 분야',
+    finance: '재무/회계 분야',
+    marketing: '마케팅 분야',
+    tech: 'R&D 분야',
+    legal: '법무 분야',
+    hr: '인사/조직 분야',
+  }
+  return labels[category] || category
+}
+
 export default function DiagnosisPage() {
   const router = useRouter()
   const { user, profile } = useAuth()
@@ -209,6 +231,10 @@ export default function DiagnosisPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<DiagnosisResult | null>(null)
   const [programs, setPrograms] = useState<GovernmentProgram[]>([])
+  
+  // 전문가 추천 상태
+  const [recommendedExperts, setRecommendedExperts] = useState<Expert[]>([])
+  const [expertsLoading, setExpertsLoading] = useState(false)
   
   // 결과 저장 관련 상태
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle")
@@ -357,6 +383,36 @@ export default function DiagnosisPage() {
     return Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
   }
 
+  // 전문가 로드 함수
+  const loadRecommendedExperts = async (challenges: string[], goals: string[]) => {
+    try {
+      setExpertsLoading(true)
+      
+      const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=experts`)
+      const result = await response.json()
+      
+      if (result.success) {
+        const matchedCategories = matchExpertCategory(challenges, goals)
+        
+        // 카테고리 매칭된 전문가 필터링 및 정렬
+        const filtered = result.data
+          .filter((expert: Expert) => matchedCategories.includes(expert.category))
+          .map((expert: Expert) => ({
+            ...expert,
+            image: convertGoogleDriveUrl(expert.image)
+          }))
+          .sort((a: Expert, b: Expert) => (b.rating || 0) - (a.rating || 0))
+          .slice(0, 3) // 상위 3명만
+        
+        setRecommendedExperts(filtered)
+      }
+    } catch (error) {
+      console.error("전문가 로드 오류:", error)
+    } finally {
+      setExpertsLoading(false)
+    }
+  }
+
   // 결과 저장 함수
   const saveResult = async () => {
     if (!user) {
@@ -488,7 +544,12 @@ export default function DiagnosisPage() {
       tags: p.tags,
       matchScore: 80,
     })),
-    nextSteps: ["추천 지원사업 상세 정보 확인", "자격요건 검토"],
+    nextSteps: [
+      "추천된 지원사업의 상세 자격요건을 확인하세요",
+      "필요 서류(사업계획서, 재무제표 등)를 미리 준비하세요",
+      "지원사업 신청 마감일 전에 여유있게 접수하세요",
+      "전문가 상담으로 지원서 작성 도움을 받으세요"
+    ],
     totalPrograms: 5,
     dataSource: "백업 데이터",
   })
@@ -505,6 +566,10 @@ export default function DiagnosisPage() {
     // 실제 로직 (간소화)
     await new Promise(resolve => setTimeout(resolve, 2000))
     setResult(getSampleResult())
+    
+    // 전문가 추천 로드
+    await loadRecommendedExperts(form.challenges, form.goals)
+    
     setLoading(false)
   }
 
@@ -520,11 +585,11 @@ export default function DiagnosisPage() {
             {/* 점수 카드 */}
             <div className="row mb-5">
               <div className="col-lg-4 mb-4">
-                <div className="card border-0 shadow-lg h-100" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
-                  <div className="card-body text-center text-white p-5">
-                    <h5 className="mb-3">종합 적합도 점수</h5>
-                    <div className="display-1 fw-bold mb-2">{result.score}</div>
-                    <span className={`badge bg-${scoreLevel.color} fs-6`}>{scoreLevel.text}</span>
+              <div className="card border-0 shadow-lg h-100" style={{ background: "linear-gradient(135deg, #B98E44 0%, #96712e 100%)" }}>
+                <div className="card-body text-center text-white p-5">
+                  <h5 className="mb-3">종합 적합도 점수</h5>
+                  <div className="display-1 fw-bold mb-2">{result.score}</div>
+                  <span className={`badge bg-white text-dark fs-6`}>{scoreLevel.text}</span>
                   </div>
                 </div>
               </div>
@@ -580,7 +645,7 @@ export default function DiagnosisPage() {
                         ) : (
                           <button className="btn btn-primary" onClick={saveResult}>
                             <i className="bi bi-bookmark me-2"></i>
-                            {user ? "결과 저장하기" : "저장하고 회원가입"}
+                            {user ? "결과 저장하기" : "가입하고 저장하기"}
                           </button>
                         )}
                       </div>
@@ -603,67 +668,55 @@ export default function DiagnosisPage() {
                   </small>
                 </div>
                 <div className="row g-4">
-                  {result.suitablePrograms.map((program, index) => (
-                    <div key={program.id || index} className="col-lg-4">
-                      <div className={`card h-100 border-0 shadow-sm hover-up ${program.status === "closed" ? "opacity-50" : ""}`}>
-                        <div className="card-body">
-                          <div className="d-flex justify-content-between align-items-start mb-2">
-                            <span className="badge bg-primary">{program.category}</span>
-                            <span className="badge bg-success">{program.matchScore}% 매칭</span>
-                          </div>
-                          
-                          {program.status === "closed" && (
-                            <div className="alert alert-secondary py-1 px-2 mb-2">
-                              <small><i className="bi bi-x-circle me-1"></i>마감됨</small>
-                            </div>
-                          )}
-                          {program.status === "closing" && program.daysLeft !== null && program.daysLeft >= 0 && (
-                            <div className="alert alert-danger py-1 px-2 mb-2">
-                              <small>
-                                <i className="bi bi-exclamation-triangle me-1"></i>
-                                마감 임박! D-{program.daysLeft}
-                              </small>
-                            </div>
-                          )}
-                          {program.status === "active" && program.daysLeft !== null && program.daysLeft <= 30 && (
-                            <div className="alert alert-warning py-1 px-2 mb-2">
-                              <small>
-                                <i className="bi bi-clock me-1"></i>
+                {result.suitablePrograms.map((program, index) => (
+                  <div key={program.id || index} className="col-lg-4">
+                    <div className={`card h-100 border-0 shadow-sm hover-up d-flex flex-column ${program.status === "closed" ? "opacity-50" : ""}`}>
+                      <div className="card-body d-flex flex-column">
+                        {/* 상단 컨텐츠 */}
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <span className="badge bg-primary">{program.category}</span>
+                          <div className="d-flex align-items-center gap-2">
+                            {program.daysLeft !== null && program.daysLeft > 0 && program.status !== "closed" && (
+                              <small className={`fw-semibold ${program.daysLeft <= 7 ? 'text-danger' : program.daysLeft <= 30 ? 'text-warning' : 'text-muted'}`}>
                                 D-{program.daysLeft}
                               </small>
-                            </div>
-                          )}
-                          
-                          <h5 className="card-title">{program.name}</h5>
-                          <p className="card-text text-muted small">{program.description}</p>
-                          <div className="mb-2">
-                            <small className="text-dark">
-                              <i className="bi bi-building me-1"></i>
-                              {program.organization}
-                            </small>
+                            )}
+                            <span className="badge bg-success">{program.matchScore}% 매칭</span>
                           </div>
-                          <div className="mb-2">
-                            <small className="text-primary">
-                              <i className="bi bi-cash me-1"></i>
-                              {program.budget}
-                            </small>
-                          </div>
-                          <div className="mb-3">
-                            <small className={
-                              program.status === "closed" ? "text-secondary text-decoration-line-through" :
-                              program.status === "closing" ? "text-danger fw-bold" : 
-                              "text-muted"
-                            }>
-                              <i className="bi bi-calendar me-1"></i>
-                              마감: {program.deadline}
-                            </small>
-                          </div>
-                          <div className="d-flex flex-wrap gap-1 mb-3">
-                            {program.tags?.slice(0, 3).map((tag, i) => (
-                              <span key={i} className="badge bg-light text-dark">{tag}</span>
-                            ))}
-                          </div>
-                          
+                        </div>
+                        
+                        <h5 className="card-title">{program.name}</h5>
+                        <p className="card-text text-muted small">{program.description}</p>
+                        <div className="mb-2">
+                          <small className="text-dark">
+                            <i className="bi bi-building me-1"></i>
+                            {program.organization}
+                          </small>
+                        </div>
+                        <div className="mb-2">
+                          <small className="text-primary">
+                            <i className="bi bi-cash me-1"></i>
+                            {program.budget}
+                          </small>
+                        </div>
+                        <div className="mb-3">
+                          <small className={
+                            program.status === "closed" ? "text-secondary text-decoration-line-through" :
+                            program.status === "closing" ? "text-danger fw-bold" : 
+                            "text-muted"
+                          }>
+                            <i className="bi bi-calendar me-1"></i>
+                            마감: {program.deadline}
+                          </small>
+                        </div>
+                        <div className="d-flex flex-wrap gap-1 mb-3">
+                          {program.tags?.slice(0, 3).map((tag, i) => (
+                            <span key={i} className="badge bg-light text-dark">{tag}</span>
+                          ))}
+                        </div>
+                        
+                        {/* 버튼 - 하단 고정 */}
+                        <div className="mt-auto">
                           {program.status === "closed" ? (
                             <button className="btn btn-secondary btn-sm w-100" disabled>
                               마감된 사업
@@ -673,7 +726,7 @@ export default function DiagnosisPage() {
                               href={program.applicationUrl} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className={`btn btn-sm w-100 ${program.status === "closing" ? "btn-danger" : "btn-outline-primary"}`}
+                              className={`btn btn-sm w-100 ${program.status === "closing" ? "btn-danger" : "btn-primary"}`}
                             >
                               <i className="bi bi-box-arrow-up-right me-1"></i>
                               {program.status === "closing" ? "지금 바로 신청" : "신청 바로가기"}
@@ -682,14 +735,94 @@ export default function DiagnosisPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
                 </div>
-                {result.dataSource && (
-                  <div className="text-center mt-3">
-                    <small className="text-muted">
-                      <i className="bi bi-info-circle me-1"></i>
-                      {result.dataSource}
-                    </small>
+              </div>
+            </div>
+
+            {/* 추천 전문가 */}
+            <div className="row mb-5">
+              <div className="col-12">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h4 className="mb-0">
+                    <i className="bi bi-person-check me-2 text-primary"></i>
+                    맞춤 전문가 추천
+                  </h4>
+                  <Link href="/experts" className="btn btn-sm btn-outline-primary">
+                    전체 전문가 보기
+                  </Link>
+                </div>
+                
+                {expertsLoading ? (
+                  <div className="text-center py-4">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">로딩중...</span>
+                    </div>
+                    <p className="mt-2 text-muted">맞춤 전문가를 찾고 있습니다...</p>
+                  </div>
+                ) : recommendedExperts.length > 0 ? (
+                  <div className="row g-4">
+                    {recommendedExperts.map((expert) => (
+                      <div key={expert.id} className="col-lg-4 col-md-6">
+                        <div className="card h-100 border-0 shadow-sm hover-up">
+                          <div className="card-body text-center p-4">
+                            <img
+                              src={expert.image}
+                              alt={expert.name}
+                              className="rounded-circle mb-3"
+                              style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement
+                                target.src = "/assets/imgs/default-expert.png"
+                              }}
+                            />
+                            <span className="badge bg-primary bg-opacity-10 text-primary mb-2">
+                              {getCategoryLabel(expert.category)}
+                            </span>
+                            <h5 className="mb-1">{expert.name}</h5>
+                            <p className="text-muted small mb-2">{expert.title}</p>
+                            <p className="text-muted small mb-3">{expert.company}</p>
+                            
+                            <div className="d-flex justify-content-center align-items-center gap-3 mb-3">
+                              <div>
+                                <i className="bi bi-star-fill text-warning me-1"></i>
+                                <span className="fw-bold">{expert.rating?.toFixed(1) || '-'}</span>
+                              </div>
+                              <div className="text-muted small">
+                                경력 {expert.experience}년
+                              </div>
+                            </div>
+                            
+                            <div className="d-flex flex-wrap justify-content-center gap-1 mb-3">
+                              {expert.specialties?.slice(0, 2).map((specialty, idx) => (
+                                <span key={idx} className="badge bg-light text-dark small">
+                                  {specialty}
+                                </span>
+                              ))}
+                            </div>
+                            
+                            <Link 
+                              href="/experts" 
+                              className="btn btn-outline-primary btn-sm w-100"
+                            >
+                              상담 문의
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-muted mb-3">
+                      <i className="bi bi-info-circle me-2"></i>
+                      현재 조건에 맞는 전문가가 없습니다.
+                    </p>
+                    <Link href="/experts" className="btn btn-outline-primary">
+                      전체 전문가 둘러보기
+                    </Link>
                   </div>
                 )}
               </div>
@@ -704,11 +837,14 @@ export default function DiagnosisPage() {
                       <i className="bi bi-signpost-split me-2 text-info"></i>
                       다음 단계
                     </h5>
-                    <div className="row">
+                    <div className="row g-3">
                       {result.nextSteps.map((step, idx) => (
-                        <div key={idx} className="col-md-6 col-lg-3 mb-3">
-                          <div className="d-flex align-items-center">
-                            <span className="badge bg-primary rounded-circle me-2" style={{ width: "24px", height: "24px", lineHeight: "16px" }}>
+                        <div key={idx} className="col-md-6 col-lg-3">
+                          <div className="d-flex align-items-start">
+                            <span 
+                              className="badge bg-primary rounded-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center" 
+                              style={{ width: "28px", height: "28px" }}
+                            >
                               {idx + 1}
                             </span>
                             <span className="small">{step}</span>
@@ -723,7 +859,7 @@ export default function DiagnosisPage() {
 
             {/* 버튼 */}
             <div className="text-center">
-              <button className="btn btn-outline-primary me-3" onClick={() => { setResult(null); setCurrentStep(1); setSaveStatus("idle") }}>
+              <button className="btn btn-outline-primary me-3" onClick={() => { setResult(null); setCurrentStep(1); setSaveStatus("idle"); setRecommendedExperts([]) }}>
                 <i className="bi bi-arrow-repeat me-2"></i>
                 다시 진단하기
               </button>
@@ -1052,7 +1188,7 @@ export default function DiagnosisPage() {
                         <i className="bi bi-arrow-left me-2"></i> 이전
                       </button>
                       <button 
-                        className="btn btn-success btn-lg" 
+                        className="btn btn-primary btn-lg" 
                         onClick={submitDiagnosis}
                         disabled={loading}
                       >

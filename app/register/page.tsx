@@ -1,5 +1,6 @@
 'use client'
 
+import PageHeader from "@/components/sections/PageHeader"
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -227,30 +228,64 @@ export default function RegisterPage() {
   }
 
   // 성공 화면
+  // 성공 화면
   if (success) {
     return (
       <Layout>
-        <section className="py-160">
+        <PageHeader title="회원가입 완료" />
+        
+        <section className="py-120">
           <div className="container">
             <div className="row justify-content-center">
-              <div className="col-lg-6 text-center">
-                <div className="icon-shape icon-100 bg-success bg-opacity-10 rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
-                  <i className="bi bi-check-lg fs-1 text-success"></i>
-                </div>
-                <h2 className="mb-3">회원가입 완료!</h2>
-                <p className="text-muted mb-4">
-                  가입하신 이메일로 인증 메일이 발송되었습니다.<br/>
-                  이메일을 확인하여 인증을 완료해주세요.
-                </p>
-                {userType === 'expert' && (
-                  <div className="alert alert-info mb-4">
-                    <i className="bi bi-info-circle me-2"></i>
-                    전문가 승인 후 전문가 페이지에 프로필이 노출됩니다.
+              <div className="col-lg-6">
+                <div className="card border-0 shadow-sm rounded-4">
+                  <div className="card-body p-5 text-center">
+                    <div className="icon-shape icon-100 bg-success bg-opacity-10 rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center">
+                      <i className="bi bi-check-lg fs-1 text-success"></i>
+                    </div>
+                    <h2 className="mb-3">회원가입 완료!</h2>
+                    <p className="text-muted mb-4">
+                      가입하신 이메일로 인증 메일이 발송되었습니다.<br/>
+                      이메일을 확인하여 인증을 완료해주세요.
+                    </p>
+                    
+                    {userType === 'expert' && (
+                      <div className="alert alert-info text-start mb-4">
+                        <div className="d-flex">
+                          <i className="bi bi-info-circle me-3 fs-5"></i>
+                          <div>
+                            <strong>전문가 승인 안내</strong>
+                            <p className="mb-0 mt-1 small">
+                              관리자 승인 후 전문가 페이지에 프로필이 노출됩니다.<br/>
+                              승인까지 1-2일 정도 소요될 수 있습니다.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                      <Link href="/login" className="btn btn-primary px-5">
+                        <i className="bi bi-box-arrow-in-right me-2"></i>
+                        로그인하기
+                      </Link>
+                      <Link href="/" className="btn btn-outline-secondary px-5">
+                        <i className="bi bi-house me-2"></i>
+                        홈으로
+                      </Link>
+                    </div>
+                    
+                    <div className="mt-5 pt-4 border-top">
+                      <p className="text-muted small mb-3">
+                        <i className="bi bi-envelope me-2"></i>
+                        인증 메일이 오지 않았나요?
+                      </p>
+                      <button className="btn btn-link btn-sm text-primary">
+                        인증 메일 재발송
+                      </button>
+                    </div>
                   </div>
-                )}
-                <Link href="/login" className="btn btn-primary">
-                  로그인하러 가기
-                </Link>
+                </div>
               </div>
             </div>
           </div>

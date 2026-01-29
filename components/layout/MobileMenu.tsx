@@ -70,49 +70,35 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 							</div>
 
 							{/* 로그인/회원가입 영역 */}
-							{!loading && (
-								<div className="mobile-menu-wrap mobile-header-border mt-3">
-									<nav>
-										<ul className="mobile-menu ps-0">
-											{user ? (
-												<>
-													<li>
-														<Link href="/mypage" onClick={handleMobileMenu}>
-															<i className="bi bi-person-circle me-2"></i>
-															마이페이지
-														</Link>
-													</li>
-													<li>
-														<button 
-															onClick={handleLogout}
-															className="border-0 bg-transparent text-start w-100 p-0"
-															style={{ color: 'inherit', fontSize: 'inherit' }}
-														>
-															<i className="bi bi-box-arrow-right me-2"></i>
-															로그아웃
-														</button>
-													</li>
-												</>
-											) : (
-												<>
-													<li>
-														<Link href="/login" onClick={handleMobileMenu}>
-															<i className="bi bi-person me-2"></i>
-															로그인
-														</Link>
-													</li>
-													<li>
-														<Link href="/register" onClick={handleMobileMenu}>
-															<i className="bi bi-person-plus me-2"></i>
-															회원가입
-														</Link>
-													</li>
-												</>
-											)}
-										</ul>
-									</nav>
-								</div>
-							)}
+							<div className="d-flex flex-column gap-2 mt-4">
+								{user ? (
+									<>
+										<Link href="/mypage" className="fs-7 d-flex align-items-center px-3">
+											<i className="bi bi-person-circle text-white me-1"></i>
+											<span className="text-white">{profile?.name || '마이페이지'}</span>
+										</Link>
+										<button
+											onClick={handleLogout}
+											className="fs-7 d-flex align-items-center border-0 bg-transparent"
+											style={{ cursor: 'pointer' }}
+										>
+											<i className="bi bi-box-arrow-right text-white me-1"></i>
+											<span className="text-white">로그아웃</span>
+										</button>
+									</>
+								) : (
+									<>
+										<Link href="/login" className="fs-7 d-flex align-items-center px-3">
+											<i className="bi bi-person text-white me-1"></i>
+											<span className="text-white">로그인</span>
+										</Link>
+										<Link href="/register" className="fs-7 d-flex align-items-center">
+											<i className="bi bi-person-plus text-white me-1"></i>
+											<span className="text-white">회원가입</span>
+										</Link>
+									</>
+								)}
+							</div>
 						</div>
 					</div>
 					<div className="tgmobile__menu-bottom mt-auto">

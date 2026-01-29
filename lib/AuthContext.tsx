@@ -25,62 +25,92 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   // 프로필 가져오기 (없으면 생성)
-  const fetchOrCreateProfile = async (currentUser: User) => {
-    console.log("fetchOrCreateProfile:", currentUser.email)
+  const fetchOrCreateProfile = async (currentUser: User): Promise<Profile | null> => {
+    console.log("fetchOrCreateProfile 시작:", currentUser.email)
     
-    // 1. 먼저 프로필 조회
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', currentUser.id)
-      .single()
-    
-    if (data) {
-      console.log("프로필 찾음:", data)
-      return data as Profile
-    }
-    
-    // 2. 프로필이 없으면 생성
-    if (error && error.code === 'PGRST116') {
-      console.log("프로필 없음, 새로 생성...")
+    try {
+      // 타임아웃 설정 (5초)
+      const timeoutPromise = new Promise<null>((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 5000)
+      )
       
-      const newProfile = {
+      const fetchPromise = async () => {
+        console.log("프로필 조회 중...")
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single()
+        
+        console.log("프로필 조회 결과:", { data, error })
+        
+        if (data) {
+          return data as Profile
+        }
+        
+        // 프로필이 없으면 생성
+        if (error && error.code === 'PGRST116') {
+          console.log("프로필 없음, 새로 생성...")
+          
+          // user_metadata에서 user_type 가져오기 (명시적으로 'expert'일 때만 expert, 그 외 모두 'user')
+        const userType = currentUser.user_metadata?.user_type
+        const isExpert = userType === 'expert'
+
+        console.log("user_metadata:", currentUser.user_metadata)
+        console.log("user_type 판단:", { userType, isExpert })
+
+        const newProfile = {
+          id: currentUser.id,
+          email: currentUser.email || '',
+          name: currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || '',
+          user_type: isExpert ? 'expert' : 'user',
+          phone: '',
+          company: '',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+          
+          const { data: created, error: createError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single()
+          
+          if (createError) {
+            console.error('프로필 생성 오류:', createError)
+            return null
+          }
+          
+          return created as Profile
+        }
+        
+        console.error('프로필 조회 오류:', error)
+        return null
+      }
+      
+      // 타임아웃과 fetch 중 먼저 완료되는 것 반환
+      const result = await Promise.race([fetchPromise(), timeoutPromise])
+      return result
+      
+    } catch (err) {
+      console.error('fetchOrCreateProfile 예외:', err)
+      
+      // user_type 판단 (명시적으로 'expert'일 때만)
+      const userType = currentUser.user_metadata?.user_type
+      const isExpert = userType === 'expert'
+      
+      // 타임아웃이나 에러 시 임시 프로필 반환
+      return {
         id: currentUser.id,
         email: currentUser.email || '',
-        name: currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || '',
-        user_type: currentUser.user_metadata?.user_type || 'user',
+        name: currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || '사용자',
+        user_type: isExpert ? 'expert' : 'user',
         phone: '',
         company: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      }
-      
-      const { data: created, error: createError } = await supabase
-        .from('profiles')
-        .insert(newProfile)
-        .select()
-        .single()
-      
-      if (createError) {
-        console.error('프로필 생성 오류:', createError)
-        // 중복 에러면 다시 조회
-        if (createError.code === '23505') {
-          const { data: retryData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', currentUser.id)
-            .single()
-          return retryData as Profile
-        }
-        return null
-      }
-      
-      console.log("프로필 생성 완료:", created)
-      return created as Profile
+      } as Profile
     }
-    
-    console.error('프로필 조회 오류:', error)
-    return null
   }
 
   useEffect(() => {

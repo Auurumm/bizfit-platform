@@ -1,5 +1,6 @@
 'use client'
 
+import PageHeader from "@/components/sections/PageHeader"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -178,12 +179,22 @@ export default function MyPage() {
   if (authLoading) {
     return (
       <Layout>
-        <section className="py-160">
-          <div className="container text-center">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
+        <PageHeader title="마이페이지" />
+        <section className="py-120">
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-lg-6">
+                <div className="card border-0 shadow-sm rounded-4">
+                  <div className="card-body p-5 text-center">
+                    <div className="spinner-border text-primary mb-4" style={{ width: '3rem', height: '3rem' }} role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 className="mb-2">잠시만 기다려주세요</h5>
+                    <p className="text-muted mb-0">정보를 불러오는 중입니다...</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="mt-3 text-muted">로딩 중...</p>
           </div>
         </section>
       </Layout>
@@ -228,7 +239,7 @@ export default function MyPage() {
   return (
     <Layout>
       {/* 페이지 헤더 */}
-      <section className="page-header position-relative overflow-hidden pt-160 pb-100" 
+      <section className="page-header position-relative overflow-hidden pt-250 pb-150" 
         style={{ backgroundColor: '#152833' }}>
         <div className="container position-relative z-1">
           <div className="text-center">

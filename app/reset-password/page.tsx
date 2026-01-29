@@ -1,5 +1,6 @@
 'use client'
 
+import PageHeader from "@/components/sections/PageHeader"
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
