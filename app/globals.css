@@ -248,22 +248,35 @@ h6 {
   .contact-info li {
     text-align: left !important;
   }
-  
-  /* 푸터 메뉴 숨기기 (모바일에서는 햄버거 메뉴 사용) */
-  footer .navbar-nav,
-  footer nav ul,
-  footer .row > .col-lg-3,
-  footer .row > .col-lg-2,
-  footer .row > div:has(h6) {
-    display: none !important;
-  }
-  
-  /* 푸터는 로고와 연락처만 표시 */
-  footer .container > .row {
-    flex-direction: column !important;
-    align-items: center !important;
-  }
 }
+
+/* ================================
+   푸터 - 태블릿 이하에서 메뉴 숨기기 (992px 이하)
+   ================================ */
+
+   @media (max-width: 992px) {
+    /* 푸터 메뉴 숨기기 (햄버거 메뉴가 보이는 시점부터) */
+    footer .row > .col-lg-2,
+    footer .row > .col-lg-3:not(:first-child),
+    footer .row > div:has(h6) {
+      display: none !important;
+    }
+    
+    /* 푸터는 로고와 연락처만 표시 */
+    footer .container > .row {
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    
+    /* 푸터 회사 정보 중앙 정렬 */
+    footer .col-lg-5 {
+      text-align: center !important;
+    }
+    
+    footer .col-lg-5 .d-flex.flex-column {
+      align-items: center !important;
+    }
+  }
 
 /* 제목/본문 기본 크기 (모바일) - 전체 적용 */
 @media (max-width: 768px) {
