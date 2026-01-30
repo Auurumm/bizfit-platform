@@ -52,9 +52,11 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 										<li>
 											<Link href="/experts" onClick={handleMobileMenu}>전문가</Link>
 										</li>
+										{/*}
 										<li>
 											<Link href="/pricing" onClick={handleMobileMenu}>요금제</Link>
 										</li>
+										*/}
 										<li>
 											<Link href="/about" onClick={handleMobileMenu}>소개</Link>
 										</li>

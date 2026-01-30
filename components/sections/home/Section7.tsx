@@ -130,9 +130,9 @@ export default function Section7() {
 							<Swiper {...swiperOptions} className="swiper slider-4 ps-3">
 								<div className="swiper-wrapper z-1">
 									{experts.map((expert) => (
-										<SwiperSlide key={expert.id}>
-											<div className="card-team overflow-hidden">
-												<div className="position-relative d-inline-flex">
+											<SwiperSlide key={expert.id}>
+											<div className="card-team overflow-hidden text-center">
+												<div className="position-relative d-inline-flex w-100 justify-content-center">
 													<img
 														src={expert.image}
 														alt={expert.name}
@@ -146,21 +146,21 @@ export default function Section7() {
 													<div className="team-overlay">
 														<div className="position-absolute top-50 start-50 translate-middle">
 															<Link href="/experts" className="btn btn-primary btn-sm"
-															  style={{ whiteSpace: 'nowrap' }}>
+															style={{ whiteSpace: 'nowrap' }}>
 																상담 문의
 															</Link>
 														</div>
 													</div>
 												</div>
-												<p className="btn-text text-primary mt-5">
+												<p className="btn-text text-primary mt-4 mb-2 text-center">
 													{getCategoryName(expert.category)}
 												</p>
-												<Link href="/experts">
-													<h5>
+												<Link href="/experts" className="text-decoration-none">
+													<h5 className="mb-2 text-center">
 														{expert.name} <strong>{expert.title}</strong>
 													</h5>
 												</Link>
-												<p className="text-muted small">
+												<p className="text-muted small mb-0 text-center">
 													{expert.specialties?.slice(0, 2).join(', ') || expert.company}
 												</p>
 											</div>

@@ -12,10 +12,9 @@ export default function Section3() {
                             <span className="content-top btn-text text-primary fw-semibold rounded-pill border border-primary px-3 py-2 bg-white">
                                 우리의 비전
                             </span>
-                            <h2 className="mt-3 mb-4">
-                                모든 중소기업이<br />
-                                <strong>성장 기회를 놓치지 않는 세상</strong>
-                            </h2>
+                            <h2 className="mt-3 mb-4" style={{ wordBreak: 'keep-all' }}>
+								모든 중소기업이 <strong>성장 기회를 놓치지 않는 세상</strong>
+							</h2>
                             <p className="text-muted mb-4">
                                 매년 수천 개의 정부 지원사업이 공고되지만,
                                 정보 부족으로 신청조차 하지 못하는 기업이 많습니다.

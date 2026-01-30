@@ -39,8 +39,7 @@ export default function Section1() {
                                 data-aos="fade-right"
                                 data-aos-delay={500}
                             >
-                                중소기업의 성장을 위한
-                                <br />
+                                <span className="d-block">중소기업의 성장을 위한</span>
                                 <strong>맞춤형 지원사업 매칭</strong>
                             </h2>
                             <p>

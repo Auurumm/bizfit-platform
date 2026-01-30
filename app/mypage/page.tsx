@@ -491,18 +491,32 @@ export default function MyPage() {
                         {bookmarks.map((bookmark) => (
                           <div key={bookmark.id} className="list-group-item px-0 py-3">
                             <div className="d-flex justify-content-between align-items-center">
-                              <div>
-                                <h6 className="mb-1">{bookmark.program_name}</h6>
+                              <div className="flex-grow-1 me-3">
+                                <Link 
+                                  href={`/programs/${bookmark.program_id}`}
+                                  className="text-decoration-none"
+                                >
+                                  <h6 className="mb-1 text-dark hover-effect-1">{bookmark.program_name}</h6>
+                                </Link>
                                 <small className="text-muted">
                                   저장일: {new Date(bookmark.created_at).toLocaleDateString('ko-KR')}
                                 </small>
                               </div>
-                              <button 
-                                className="btn btn-outline-danger btn-sm"
-                                onClick={() => handleDeleteBookmark(bookmark.id)}
-                              >
-                                <i className="bi bi-trash"></i>
-                              </button>
+                              <div className="d-flex gap-2">
+                                <Link 
+                                  href={`/programs/${bookmark.program_id}`}
+                                  className="btn btn-outline-primary btn-sm"
+                                >
+                                  <i className="bi bi-eye me-1"></i>
+                                  보기
+                                </Link>
+                                <button 
+                                  className="btn btn-outline-danger btn-sm"
+                                  onClick={() => handleDeleteBookmark(bookmark.id)}
+                                >
+                                  <i className="bi bi-trash"></i>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}

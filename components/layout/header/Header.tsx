@@ -90,9 +90,11 @@ export default function Header({ scroll, isMobileMenu, handleMobileMenu }: any) 
 									<li className="nav-item">
 										<Link className="nav-link text-uppercase" href="/experts">전문가</Link>
 									</li>
+									{/*}
 									<li className="nav-item">
 										<Link className="nav-link text-uppercase" href="/pricing">요금제</Link>
 									</li>
+									*/}
 									<li className="nav-item">
 										<Link className="nav-link text-uppercase" href="/about">소개</Link>
 									</li>

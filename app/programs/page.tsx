@@ -353,7 +353,7 @@ export default function ProgramsPage() {
     return (
       <Layout>
         <PageHeader title="지원사업" />
-        <section className="py-120">
+        <section className="py-120 program-list-page">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-6">
@@ -420,8 +420,6 @@ export default function ProgramsPage() {
           <div className="d-flex flex-wrap justify-content-between align-items-center mb-5" data-aos="fade-up">
             <div>
               <p className="text-muted mb-0">
-                전체 <strong className="text-primary">{totalAvailable}개</strong> 중{" "}
-                <strong className="text-primary">{filteredPrograms.length}개</strong> 표시
                 {(searchQuery || categoryFilter || statusFilter) && " (필터링됨)"}
               </p>
             </div>
@@ -628,21 +626,6 @@ export default function ProgramsPage() {
                             ? `${program.description.substring(0, 80)}...`
                             : program.description || "상세내용은 공고를 확인해주세요."}
                         </p>
-
-
-                        {/* 태그 */}
-                        <div className="d-flex flex-wrap gap-1 mb-3">
-                          {program.tags.slice(0, 3).map((tag, i) => (
-                            <span 
-                              key={i} 
-                              className="badge bg-light text-dark border fs-8"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => setSearchQuery(tag)}
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
 
                         {/* 마감일 정보 */}
                         <div className="mb-3">
