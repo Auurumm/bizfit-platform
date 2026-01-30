@@ -10,16 +10,14 @@ import {
   Building,
   Phone,
   ExternalLink,
-  Download,
   Share2,
   Heart,
-  Clock,
-  Award,
-  TrendingUp,
   CheckCircle,
   Info,
   FileText,
   Tag,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import Layout from "@/components/layout/Layout"
 import PageHeader from "@/components/sections/PageHeader"
@@ -250,38 +248,41 @@ export default function SupportProgramDetailPage() {
   return (
     <Layout>
       <PageHeader title="지원사업 상세" />
-      <section className="py-120">
+      <section className="py-120 program-detail-page">
         <div className="container">
           {/* Header Actions */}
-          <div className="row mb-5">
-            <div className="col-12">
-              <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div className="row mb-5">
+          <div className="col-12">
+           <div className="d-flex flex-wrap align-items-center justify-content-end justify-content-sm-between gap-3 mb-4">
+              {/* 왼쪽: 목록으로 버튼 */}
+              <button 
+                onClick={() => router.back()} 
+                className="btn btn-primary hover-up d-flex align-items-center"
+              >
+                <ArrowLeft className="me-2" size={16} />
+                <span>목록으로</span>
+              </button>
+
+              {/* 오른쪽: 북마크, 공유 */}
+              <div className="d-flex align-items-center gap-2 ms-auto">
                 <button 
-                  onClick={() => router.back()} 
-                  className="btn btn-outline-secondary hover-up"
-                >
-                  <ArrowLeft className="me-2" size={16} />
-                  <span>목록으로</span>
-                </button>
-                <div className="d-flex align-items-center gap-2">
-                  <button 
-                    onClick={toggleFavorite}
-                    className="btn btn-outline-secondary icon-shape icon-md hover-up"
+                    onClick={() => router.push(`/programs/${Number(programId) - 1}`)}
+                    className="btn btn-outline-primary d-flex align-items-center"
+                    title="이전 지원사업"
                   >
-                    <Heart 
-                      size={18}
-                      className={favorite ? "text-danger" : ""}
-                      fill={favorite ? "currentColor" : "none"}
-                    />
+                    <ChevronLeft size={18} className="me-1" />
+                    <span className="d-none d-sm-inline">이전</span>
                   </button>
                   <button 
-                    onClick={shareProgram}
-                    className="btn btn-outline-secondary icon-shape icon-md hover-up"
+                    onClick={() => router.push(`/programs/${Number(programId) + 1}`)}
+                    className="btn btn-outline-primary d-flex align-items-center"
+                    title="다음 지원사업"
                   >
-                    <Share2 size={18} />
+                    <span className="d-none d-sm-inline">다음</span>
+                    <ChevronRight size={18} className="ms-1" />
                   </button>
-                </div>
               </div>
+            </div>
 
               {/* Status and Category Badges */}
               <div className="d-flex flex-wrap align-items-center gap-2 mb-4">
@@ -300,15 +301,9 @@ export default function SupportProgramDetailPage() {
 
               {/* Title Section */}
               <h2 className="mb-4">{program.title}</h2>
-              <div className="d-flex flex-column gap-2 mb-2">
-                <p className="fs-5 text-primary fw-semibold mb-0">
-                  {program.ministry} • {program.organization}
-                </p>
-                <p className="text-muted fs-6">
-                  <Clock size={16} className="me-2" />
-                  등록일: {formatDate(program.registrationDate)}
-                </p>
-              </div>
+              <p className="fs-5 text-primary fw-semibold mb-4">
+                {program.ministry} • {program.organization}
+              </p>
             </div>
           </div>
 
@@ -340,8 +335,7 @@ export default function SupportProgramDetailPage() {
                   </div>
                   <ul className="list-unstyled mb-0">
                     {program.requirements.map((req, index) => (
-                      <li key={index} className="d-flex align-items-start mb-3">
-                        <div className="bg-primary rounded-circle me-3 mt-1" style={{ width: '8px', height: '8px', minWidth: '8px' }}></div>
+                      <li key={index} className="mb-3">   
                         <span className="text-muted">{req}</span>
                       </li>
                     ))}
@@ -371,22 +365,6 @@ export default function SupportProgramDetailPage() {
 
             {/* Right Column - Sidebar */}
             <div className="col-lg-4">
-              {/* Budget Card */}
-              <div 
-                className="card border-0 shadow-sm mb-4 bg-gradient" 
-                style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
-                data-aos="fade-up"
-              >
-                <div className="card-body p-4">
-                  <div className="d-flex align-items-center mb-3">
-                    <Award className="text-white me-2" size={24} />
-                    <h5 className="mb-0 text-white fw-bold">지원금액</h5>
-                  </div>
-                  <div className="display-6 fw-bold text-white mb-2">{program.budget}</div>
-                  <p className="text-white opacity-75 mb-0 fs-7">지원 유형: {program.supportType}</p>
-                </div>
-              </div>
-
               {/* Key Info Card */}
               <div className="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
                 <div className="card-body p-4">
@@ -455,8 +433,8 @@ export default function SupportProgramDetailPage() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="d-flex flex-column gap-3" data-aos="fade-up" data-aos-delay="300">
+              {/* Action Button */}
+              <div data-aos="fade-up" data-aos-delay="300">
                 <button 
                   onClick={() => window.open(program.applicationUrl, "_blank")}
                   className="btn btn-primary w-100 py-3 hover-up"
@@ -464,38 +442,6 @@ export default function SupportProgramDetailPage() {
                   <ExternalLink size={18} className="me-2" />
                   <span>공식 신청하기</span>
                 </button>
-                <button className="btn btn-outline-secondary w-100 py-3 hover-up">
-                  <Download size={18} className="me-2" />
-                  <span>상세 자료 다운로드</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Related Programs */}
-          <div className="row mt-5">
-            <div className="col-12">
-              <div className="card border-0 shadow-sm" data-aos="fade-up">
-                <div className="card-body p-lg-5 p-4">
-                  <div className="d-flex align-items-center mb-4">
-                    <div className="icon-shape icon-md bg-primary bg-opacity-10 rounded-3 me-3">
-                      <TrendingUp className="text-primary" size={24} />
-                    </div>
-                    <div>
-                      <h4 className="mb-1 fw-bold">관련 지원사업</h4>
-                      <p className="text-muted mb-0 fs-7">이 지원사업과 유사한 다른 지원사업들을 확인해보세요</p>
-                    </div>
-                  </div>
-                  <div className="text-center py-5">
-                    <p className="text-muted mb-4">관련 지원사업 추천 기능은 곧 업데이트됩니다</p>
-                    <button 
-                      onClick={() => router.push("/programs")} 
-                      className="btn btn-outline-primary hover-up"
-                    >
-                      전체 지원사업 보기
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

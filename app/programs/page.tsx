@@ -565,17 +565,28 @@ export default function ProgramsPage() {
                       data-aos-delay={index * 30}
                     >
                       <div className="card-body p-4 d-flex flex-column">
-                        {/* 상단: 카테고리 & 상태 & 북마크 */}
+                        {/* 상단: 카테고리 & 상태 & 태그 & 북마크 */}
                         <div className="d-flex justify-content-between align-items-start mb-3">
                           <div className="d-flex align-items-center gap-2 flex-wrap">
-                            <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-7">
+                            <span className="badge bg-primary bg-opacity-10 text-primary px-2 py-1 fs-8">
                               {program.category}
                             </span>
                             <StatusBadge status={program.status} daysLeft={program.daysLeft} />
+                            {/* 태그 - 2개만 표시 */}
+                            {program.tags.slice(0, 2).map((tag, i) => (
+                              <span 
+                                key={i} 
+                                className="badge bg-light text-dark border fs-8"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => setSearchQuery(tag)}
+                              >
+                                #{tag}
+                              </span>
+                            ))}
                           </div>
                           {/* 북마크 버튼 */}
                           <button
-                            className={`btn btn-sm p-1 ${bookmarks.has(program.id) ? 'text-warning' : 'text-muted'}`}
+                            className={`btn btn-sm p-1 flex-shrink-0 ${bookmarks.has(program.id) ? 'text-warning' : 'text-muted'}`}
                             onClick={() => toggleBookmark(program)}
                             disabled={bookmarkLoading === program.id}
                             title={bookmarks.has(program.id) ? '북마크 해제' : '북마크 추가'}
@@ -618,24 +629,6 @@ export default function ProgramsPage() {
                             : program.description || "상세내용은 공고를 확인해주세요."}
                         </p>
 
-                        {/* 마감일 정보 */}
-                        <div className="mb-3">
-                          <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
-                            <div className="d-flex align-items-center">
-                              <Calendar size={16} className="text-primary me-2" />
-                              <span className="fs-7 text-muted">마감일</span>
-                            </div>
-                            <div className="text-end">
-                              <div className={`fw-semibold fs-7 ${
-                                program.status === "closing" ? "text-danger" : 
-                                program.status === "closed" ? "text-secondary" : "text-dark"
-                              }`}>
-                                {program.deadline}
-                              </div>
-                              <DdayBadge daysLeft={program.daysLeft} status={program.status} />
-                            </div>
-                          </div>
-                        </div>
 
                         {/* 태그 */}
                         <div className="d-flex flex-wrap gap-1 mb-3">
@@ -650,6 +643,25 @@ export default function ProgramsPage() {
                             </span>
                           ))}
                         </div>
+
+                        {/* 마감일 정보 */}
+                        <div className="mb-3">
+                          <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
+                            <div className="d-flex align-items-center">
+                              <Calendar size={16} className="text-primary me-2" />
+                              <span className="fs-7 text-muted">마감일</span>
+                            </div>
+                            <div className="text-end">
+                              <div className={`fw-semibold fs-7 ${
+                                program.status === "closing" ? "text-danger" : 
+                                program.status === "closed" ? "text-secondary" : "text-dark"
+                              }`}>
+                                {program.deadline}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
 
                       {/* 카드 푸터 */}
@@ -681,15 +693,16 @@ export default function ProgramsPage() {
                 ))}
               </div>
 
-              {/* 페이지네이션 */}
+              {/* 페이지네이션 - 개선된 버전 */}
               {totalPages > 1 && (
                 <nav className="mt-5" data-aos="fade-up">
-                  <ul className="pagination justify-content-center align-items-center gap-1 flex-nowrap mb-0">
+                  <ul className="pagination justify-content-center align-items-center gap-2 flex-wrap mb-0">
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button
-                        className="page-link border rounded-2 px-3"
+                        className="page-link border-2 border-primary rounded-2 px-3 py-2 bg-white text-primary hover-up"
                         onClick={() => setCurrentPage(1)}
                         disabled={currentPage === 1}
+                        style={{ fontWeight: '500' }}
                       >
                         처음
                       </button>
@@ -710,10 +723,13 @@ export default function ProgramsPage() {
                     }).map(page => (
                       <li key={page} className="page-item">
                         <button
-                          className={`page-link border-0 px-3 ${
-                            currentPage === page ? "fw-bold text-dark" : "text-muted"
+                          className={`page-link px-3 py-2 rounded-2 ${
+                            currentPage === page 
+                              ? "bg-primary text-white border-primary fw-bold" 
+                              : "bg-white text-dark border-2 border-secondary hover-up"
                           }`}
                           onClick={() => setCurrentPage(page)}
+                          style={{ minWidth: '40px', fontWeight: currentPage === page ? 'bold' : '500' }}
                         >
                           {page}
                         </button>
@@ -722,9 +738,10 @@ export default function ProgramsPage() {
 
                     <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                       <button
-                        className="page-link border rounded-2 px-3"
+                        className="page-link border-2 border-primary rounded-2 px-3 py-2 bg-white text-primary hover-up"
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
+                        style={{ fontWeight: '500' }}
                       >
                         다음
                       </button>
@@ -732,9 +749,10 @@ export default function ProgramsPage() {
 
                     <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                       <button
-                        className="page-link border rounded-2 px-3"
+                        className="page-link border-2 border-primary rounded-2 px-3 py-2 bg-white text-primary hover-up"
                         onClick={() => setCurrentPage(totalPages)}
                         disabled={currentPage === totalPages}
+                        style={{ fontWeight: '500' }}
                       >
                         마지막
                       </button>

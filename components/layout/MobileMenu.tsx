@@ -21,17 +21,13 @@ export default function MobileMenu({ isMobileMenu, handleMobileMenu }: any) {
 			<div className="mobile-menu-overlay" onClick={handleMobileMenu} />
 			<div className={`mobile-header-active mobile-header-wrapper-style ${isMobileMenu ? 'sidebar-visible' : ''}`}>
 				<div className="mobile-header-wrapper-inner">
-					<div className="mobile-header-logo">
-						<Link className="d-flex align-items-center gap-2" href="/">
-							{/* 비즈핏 로고 */}
-							<svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="#794AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-								<path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z"/>
-								<path d="M16 8V5c0-1.1.9-2 2-2"/>
-								<path d="M12 13h4"/>
-								<path d="M12 18h6a2 2 0 0 1 2 2v1"/>
-								<path d="M12 8h8"/>
-							</svg>
-							<h5 className="mb-0">비즈핏</h5>
+					<div className="mobile-header-logo" style={{ backgroundColor: '#B98E44', padding: '1rem' }}>
+						<Link className="d-flex align-items-center" href="/">
+							<img 
+								src="/assets/imgs/logo.png" 
+								alt="비즈핏" 
+								style={{ height: '60px', width: 'auto' }}
+							/>
 						</Link>
 						<div className={`burger-icon burger-icon-white border rounded-circle ${isMobileMenu ? 'burger-close' : ''}`} onClick={handleMobileMenu}>
 							<span className="burger-icon-top" />

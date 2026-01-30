@@ -17,11 +17,9 @@ export default function Section1() {
 							</span>
 							{/* 행간 정리 */}
 							<h1 className="text-white ds-1 mt-4" style={{ lineHeight: '1.3' }}>
-								정부 지원사업
+								정부 지원사업 한눈에 찾고,
 								<br />
-								한눈에 찾고,
-								<br />
-								<strong className="text-primary">AI로 추천</strong>
+								<strong className="text-primary d-block">AI로 추천</strong>
 							</h1>
 							<p className="text-white fs-5 mt-4 opacity-75">
 								실시간 정부 지원사업 정보와 AI 기반 맞춤 추천으로
